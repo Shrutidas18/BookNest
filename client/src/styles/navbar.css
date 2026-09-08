@@ -1,0 +1,140 @@
+/* =========================================
+   NAVIGATION
+   ========================================= */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  height: var(--nav-height);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 max(
+    24px,
+    calc((100vw - var(--container-width)) / 2)
+  );
+
+  background: rgba(255, 255, 255, 0.92);
+
+  border-bottom: 1px solid var(--border-light);
+
+  backdrop-filter: blur(14px);
+}
+
+/* =========================================
+   BRAND
+   ========================================= */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  color: var(--text);
+
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.brand::before {
+  content: "";
+
+  width: 30px;
+  height: 30px;
+
+  display: inline-block;
+
+  border-radius: 9px;
+
+  background: var(--primary);
+
+  box-shadow:
+    inset -5px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+/* =========================================
+   NAV LINKS
+   ========================================= */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-links a {
+  padding: 8px 12px;
+
+  border-radius: var(--radius-sm);
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    color var(--transition),
+    background var(--transition);
+}
+
+.nav-links a:hover {
+  color: var(--text);
+  background: var(--surface-soft);
+}
+
+/* =========================================
+   NAV BUTTON
+   ========================================= */
+
+.nav-button {
+  padding: 8px 12px;
+
+  background: transparent;
+  color: var(--text-secondary);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  box-shadow: none;
+}
+
+.nav-button:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+
+  box-shadow: none;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 650px) {
+  .nav {
+    padding: 0 14px;
+  }
+
+  .brand {
+    font-size: 19px;
+  }
+
+  .brand::before {
+    width: 27px;
+    height: 27px;
+  }
+
+  .nav-links {
+    gap: 2px;
+  }
+
+  .nav-links a,
+  .nav-button {
+    padding: 7px 8px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,304 @@
+/* =========================================
+   DASHBOARD HERO
+   ========================================= */
+
+.hero.dashboard-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+
+  margin-bottom: 36px;
+}
+
+.hero.dashboard-hero > div {
+  max-width: 640px;
+}
+
+.hero.dashboard-hero p:last-child {
+  margin-bottom: 0;
+}
+
+/* =========================================
+   STATS GRID
+   ========================================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: 20px 22px;
+}
+
+.stat-card .muted {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.stat-card strong {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.stat-card small {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* =========================================
+   MAIN DASHBOARD GRID (books + quick actions)
+   ========================================= */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  align-items: start;
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+/* =========================================
+   BOOK CARDS
+   (one card per book, in a responsive grid)
+   ========================================= */
+
+.book-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.book-item {
+  display: flex;
+  flex-direction: column;
+
+  padding: 18px 20px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition-fast);
+}
+
+.book-item:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-xs);
+  transform: translateY(-2px);
+}
+
+.book-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.book-info h3 {
+  margin-bottom: 2px;
+}
+
+.book-info p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Status pill */
+.pill {
+  flex-shrink: 0;
+
+  padding: 5px 12px;
+  border-radius: 999px;
+
+  background: var(--primary-light);
+  color: var(--primary-dark);
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Status-specific pill colors */
+.pill-reading {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.pill-finished {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.pill-want_to_read {
+  background: var(--secondary-light);
+  color: var(--secondary);
+}
+
+/* Reading progress bar */
+.progress-area {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 6px;
+
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.progress-bar {
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface-soft);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width var(--transition-slow);
+}
+
+/* =========================================
+   QUICK ACTIONS
+   ========================================= */
+
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-button {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  padding: 14px 16px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+
+  text-align: left;
+  color: var(--text);
+
+  box-shadow: none;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--transition-fast);
+}
+
+.action-button:hover:not(:disabled) {
+  background: var(--surface-soft);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-xs);
+}
+
+.action-button strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.action-button span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* =========================================
+   ACTIVITY FEED
+   ========================================= */
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.activity-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.activity-item strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.activity-item small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero.dashboard-hero {
+    align-items: flex-start;
+  }
+
+  .book-list {
+    grid-template-columns: 1fr;
+  }
+}

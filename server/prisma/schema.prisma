@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookStatus {
+  WANT_TO_READ
+  READING
+  FINISHED
+}
+
+enum ShelfRole {
+  EDITOR
+  VIEWER
+}
+
+enum ActivityType {
+  BOOK_ADDED
+  STATUS_CHANGED
+  BOOK_LENT
+  BOOK_RETURNED
+  SHELF_SHARED
+  COLLABORATOR_ROLE_CHANGED
+  COLLABORATOR_REMOVED
+}
+
+model User {
+  id             String         @id @default(cuid())
+  name           String
+  email          String         @unique
+  passwordHash   String
+  books          Book[]
+  ownedShelves   Shelf[]
+  shelfShares    ShelfShare[]
+  lendingsAsOwner Lending[]     @relation("LendingOwner")
+  lendingsBorrowed Lending[]    @relation("LendingBorrower")
+  refreshTokens  RefreshToken[]
+  activities     ActivityLog[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Book {
+  id          String      @id @default(cuid())
+  title       String
+  author      String
+  status      BookStatus  @default(WANT_TO_READ)
+  totalPages  Int?
+  currentPage Int         @default(0)
+  rating      Int?
+  notes       String?
+  finishedAt  DateTime?
+  ownerId     String
+  owner       User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  shelves     ShelfBook[]
+  lendings    Lending[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([ownerId, status])
+  @@index([ownerId, createdAt])
+}
+
+model Shelf {
+  id            String       @id @default(cuid())
+  name          String
+  ownerId       String
+  owner         User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  books         ShelfBook[]
+  collaborators ShelfShare[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model ShelfBook {
+  shelfId String
+  bookId  String
+  shelf   Shelf @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+  book    Book  @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@id([shelfId, bookId])
+  @@index([bookId])
+}
+
+model ShelfShare {
+  id        String    @id @default(cuid())
+  shelfId   String
+  userId    String
+  role      ShelfRole
+  shelf     Shelf     @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([shelfId, userId])
+  @@index([userId])
+}
+
+model Lending {
+  id         String    @id @default(cuid())
+  bookId     String
+  ownerId    String
+  borrowerId String
+  lentAt     DateTime  @default(now())
+  returnedAt DateTime?
+  book       Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  owner      User      @relation("LendingOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  borrower   User      @relation("LendingBorrower", fields: [borrowerId], references: [id], onDelete: Cascade)
+
+  @@index([bookId, returnedAt])
+  @@index([borrowerId, returnedAt])
+}
+
+model ActivityLog {
+  id        String       @id @default(cuid())
+  userId    String
+  type      ActivityType
+  message   String
+  metadata  Json?
+  createdAt DateTime     @default(now())
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

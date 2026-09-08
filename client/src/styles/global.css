@@ -1,0 +1,298 @@
+/* =========================================
+   GLOBAL RESET
+   ========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =========================================
+   APP
+   ========================================= */
+
+.app {
+  min-height: 100vh;
+}
+
+/* =========================================
+   MAIN CONTAINER
+   ========================================= */
+
+.container {
+  width: min(
+    var(--container-width),
+    calc(100% - 48px)
+  );
+
+  margin: 0 auto;
+  padding: 42px 0 70px;
+}
+
+/* =========================================
+   GENERIC CARD
+   ========================================= */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+
+  padding: 24px;
+}
+
+/* =========================================
+   TYPOGRAPHY
+   ========================================= */
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--text);
+  letter-spacing: -0.025em;
+}
+
+h1 {
+  font-size: 42px;
+  line-height: 1.1;
+  font-weight: 750;
+}
+
+h2 {
+  font-size: 23px;
+  line-height: 1.25;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+p {
+  color: var(--text-secondary);
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+/* =========================================
+   EYEBROW
+   ========================================= */
+
+.eyebrow {
+  margin-bottom: 8px;
+
+  color: var(--primary);
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
+button {
+  border: 0;
+  border-radius: var(--radius-sm);
+
+  padding: 11px 17px;
+
+  background: var(--primary);
+  color: white;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  transition:
+    background var(--transition),
+    transform var(--transition-fast),
+    box-shadow var(--transition);
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.55;
+}
+
+/* =========================================
+   FORM ELEMENTS
+   ========================================= */
+
+input,
+select,
+textarea {
+  width: 100%;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-sm);
+
+  padding: 12px 14px;
+
+  background: var(--surface);
+
+  color: var(--text);
+
+  outline: none;
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background var(--transition);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #a1a8a3;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #cdd1cb;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 3px rgba(49, 92, 76, 0.1);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* =========================================
+   FEEDBACK
+   ========================================= */
+
+.error {
+  margin: 0;
+
+  padding: 11px 13px;
+
+  border: 1px solid #f1d0cd;
+  border-radius: var(--radius-sm);
+
+  background: var(--danger-light);
+  color: var(--danger);
+
+  font-size: 14px;
+}
+
+.success {
+  margin: 0;
+
+  padding: 11px 13px;
+
+  border: 1px solid #cfe4d5;
+  border-radius: var(--radius-sm);
+
+  background: var(--success-light);
+  color: var(--success);
+
+  font-size: 14px;
+}
+
+/* =========================================
+   GENERIC SECTION HEADING
+   ========================================= */
+
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  margin-bottom: 0;
+}
+
+.section-heading .eyebrow {
+  margin-bottom: 5px;
+}
+
+/* =========================================
+   RESPONSIVE BASE
+   ========================================= */
+
+@media (max-width: 700px) {
+  .container {
+    width: min(
+      100% - 28px,
+      var(--container-width)
+    );
+
+    padding-top: 28px;
+    padding-bottom: 45px;
+  }
+
+  h1 {
+    font-size: 34px;
+  }
+
+  h2 {
+    font-size: 21px;
+  }
+}
