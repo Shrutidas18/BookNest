@@ -77,10 +77,13 @@ async function listBooks(req, res) {
       break;
 
     case 'rating':
-      orderBy = {
-        rating: direction,
-      };
-      break;
+  orderBy = {
+    rating: {
+      sort: direction,
+      nulls: 'last',
+    },
+  };
+  break;
 
     case 'date':
     case 'createdAt':

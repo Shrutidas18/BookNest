@@ -747,18 +747,18 @@ export default function Library() {
                     )}
 
                     {/* Rating */}
-                    {book.status ===
-                      'FINISHED' &&
-                      book.rating && (
-                        <div className="book-rating">
-                          {'★'.repeat(
-                            book.rating
-                          )}
-                          {'☆'.repeat(
-                            5 - book.rating
-                          )}
-                        </div>
-                      )}
+{book.rating !== null &&
+  book.rating !== undefined && (
+    <div
+      className="book-rating"
+      aria-label={`Rating: ${book.rating} out of 5`}
+    >
+      {'★'.repeat(Number(book.rating))}
+      {'☆'.repeat(
+        5 - Number(book.rating)
+      )}
+    </div>
+  )}
 
                     {/* Footer */}
                     <div className="book-card-footer">

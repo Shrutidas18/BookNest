@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
@@ -20,6 +19,7 @@ export default function EditBook() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -277,14 +277,6 @@ export default function EditBook() {
   }
 
   async function handleDelete() {
-    const confirmed = window.confirm(
-      'Are you sure you want to delete this book? This action cannot be undone.'
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     setDeleting(true);
     setError('');
 
@@ -306,6 +298,8 @@ export default function EditBook() {
       );
 
       setDeleting(false);
+    } finally {
+      setShowDeleteModal(false);
     }
   }
 
@@ -542,7 +536,9 @@ export default function EditBook() {
             <button
               type="button"
               className="danger-button"
-              onClick={handleDelete}
+              onClick={() =>
+                setShowDeleteModal(true)
+              }
               disabled={
                 saving || deleting
               }
@@ -557,7 +553,54 @@ export default function EditBook() {
         </form>
 
       </section>
+
+      {showDeleteModal && (
+        <div className="delete-modal-overlay">
+          <div
+            className="delete-modal card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+          >
+            <h2 id="delete-modal-title">
+              Delete this book?
+            </h2>
+
+            <p className="muted">
+              Are you sure you want to delete{' '}
+              <strong>{form.title}</strong>?
+              This action cannot be undone.
+            </p>
+
+            <div className="delete-modal-actions">
+
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() =>
+                  setShowDeleteModal(false)
+                }
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="danger-button"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting
+                  ? 'Deleting…'
+                  : 'Delete Book'}
+              </button>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
-

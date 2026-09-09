@@ -50,6 +50,8 @@ api.interceptors.response.use(
     if (
       error.response?.status !== 401 ||
       original?._retry ||
+      original?.url?.includes('/auth/login') ||
+      original?.url?.includes('/auth/signup') ||
       original?.url?.includes('/auth/refresh')
     ) {
       return Promise.reject(error);
