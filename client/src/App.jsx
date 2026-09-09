@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Link,
@@ -12,6 +11,11 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import AddBook from './pages/AddBook';
+import Library from './pages/Library';
+import EditBook from './pages/EditBook';
+import Shelves from './pages/Shelves';
+import ShelfDetails from './pages/ShelfDetails';
+import Lending from './pages/Lending';
 
 import api, { setAccessToken } from './services/api';
 
@@ -52,7 +56,21 @@ function Navigation() {
       <div className="nav-links">
         {isAuthenticated ? (
           <>
-            <Link to="/">Dashboard</Link>
+            <Link to="/">
+              Dashboard
+            </Link>
+
+            <Link to="/books">
+              My Library
+            </Link>
+
+            <Link to="/shelves">
+              Shelves
+            </Link>
+
+            <Link to="/lending">
+              Lending
+            </Link>
 
             <Link to="/books/add">
               Add Book
@@ -68,7 +86,9 @@ function Navigation() {
           </>
         ) : (
           <>
-            <Link to="/login">Login</Link>
+            <Link to="/login">
+              Login
+            </Link>
 
             <Link to="/signup">
               Sign up
@@ -87,6 +107,7 @@ export default function App() {
 
       <main className="container">
         <Routes>
+
           {/* Dashboard */}
           <Route
             path="/"
@@ -97,12 +118,62 @@ export default function App() {
             }
           />
 
+          {/* Library */}
+          <Route
+            path="/books"
+            element={
+              <ProtectedRoute>
+                <Library />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Add Book */}
           <Route
             path="/books/add"
             element={
               <ProtectedRoute>
                 <AddBook />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Edit Book */}
+          <Route
+            path="/books/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditBook />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Shelves */}
+          <Route
+            path="/shelves"
+            element={
+              <ProtectedRoute>
+                <Shelves />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Shelf Details */}
+          <Route
+            path="/shelves/:id"
+            element={
+              <ProtectedRoute>
+                <ShelfDetails />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Lending */}
+          <Route
+            path="/lending"
+            element={
+              <ProtectedRoute>
+                <Lending />
               </ProtectedRoute>
             }
           />
@@ -123,9 +194,9 @@ export default function App() {
             path="*"
             element={<Navigate to="/" replace />}
           />
+
         </Routes>
       </main>
     </div>
   );
 }
-

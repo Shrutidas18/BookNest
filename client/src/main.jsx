@@ -5,6 +5,9 @@ import App from './App';
 import './styles/variables.css';
 import './styles/global.css';
 import './styles/navbar.css';
+import './styles/books.css';
+import './styles/Shelves.css';
+import './styles/Lending.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

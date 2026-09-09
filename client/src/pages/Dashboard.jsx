@@ -57,6 +57,10 @@ export default function Dashboard() {
     navigate('/books/add');
   }
 
+  function goToLibrary() {
+    navigate('/books');
+  }
+
   return (
     <>
       {/* Hero */}
@@ -117,9 +121,13 @@ export default function Dashboard() {
               <h2>Recent Books</h2>
             </div>
 
-            <span className="muted">
-              {totalBooks} total
-            </span>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={goToLibrary}
+            >
+              View all
+            </button>
           </div>
 
           {dashboard.recentBooks.length === 0 ? (
@@ -137,7 +145,10 @@ export default function Dashboard() {
                     : 0;
 
                 return (
-                  <div className="book-item" key={book.id}>
+                  <div
+                    className="book-item"
+                    key={book.id}
+                  >
                     <div className="book-info">
                       <div>
                         <h3>{book.title}</h3>
@@ -210,9 +221,7 @@ export default function Dashboard() {
             <button
               type="button"
               className="action-button"
-              onClick={() => {
-                alert('Full library view is coming next.');
-              }}
+              onClick={goToLibrary}
             >
               <strong>View my library</strong>
               <span>Browse and manage all your books</span>
@@ -237,7 +246,10 @@ export default function Dashboard() {
         ) : (
           <div className="activity-list">
             {dashboard.recentActivity.map((item) => (
-              <div className="activity-item" key={item.id}>
+              <div
+                className="activity-item"
+                key={item.id}
+              >
                 <div className="activity-dot" />
 
                 <div>

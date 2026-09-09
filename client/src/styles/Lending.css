@@ -1,0 +1,322 @@
+.lending-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-bottom: 48px;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.lending-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 30px;
+  border-radius: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.lending-header h1 {
+  margin: 4px 0 8px;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.lending-header-icon {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 30px;
+}
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+.lending-page .section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.lending-page .section-heading h2 {
+  margin: 4px 0 0;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+/* =========================================================
+   LEND BOOK CARD
+   ========================================================= */
+
+.lend-book-card {
+  padding: 28px;
+}
+
+.lend-book-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--input-bg, var(--surface));
+  color: var(--text);
+  font: inherit;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.lend-book-form > button {
+  min-height: 44px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.lend-book-form > button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.lend-book-form > button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LENDING LIST
+   ========================================================= */
+
+.lending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lending-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.lending-book-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 22px;
+}
+
+.lending-book-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.lending-book-info h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.lending-book-info p {
+  margin: 0 0 5px;
+}
+
+.lending-book-info small {
+  display: block;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.lending-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   STATUS BADGES
+   ========================================================= */
+
+.lending-status,
+.borrowed-status {
+  white-space: nowrap;
+}
+
+.lending-status {
+  background: var(--primary-soft);
+}
+
+.borrowed-status {
+  background: var(--surface);
+}
+
+/* =========================================================
+   EMPTY / LOADING STATE
+   ========================================================= */
+
+.lending-state {
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.lending-state .empty-icon {
+  margin-bottom: 12px;
+  font-size: 36px;
+}
+
+.lending-state h2 {
+  margin: 0 0 8px;
+  font-size: 19px;
+}
+
+.lending-state p {
+  margin: 0;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.shelf-error {
+  padding: 14px 18px;
+}
+
+.shelf-error .error {
+  margin: 0;
+}
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+.lending-back-button {
+  align-self: flex-start;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 850px) {
+  .lend-book-form {
+    grid-template-columns: 1fr;
+  }
+
+  .lend-book-form > button {
+    width: 100%;
+  }
+
+  .lending-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .lending-book-info {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .lending-actions {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 64px;
+  }
+}
+
+@media (max-width: 600px) {
+  .lending-header {
+    padding: 22px;
+  }
+
+  .lending-header h1 {
+    font-size: 26px;
+  }
+
+  .lending-header-icon {
+    width: 52px;
+    height: 52px;
+    font-size: 24px;
+  }
+
+  .lend-book-card {
+    padding: 22px;
+  }
+
+  .lending-item {
+    padding: 16px;
+  }
+
+  .lending-actions {
+    flex-direction: column;
+    align-items: stretch;
+    padding-left: 0;
+  }
+
+  .lending-actions .secondary-button {
+    width: 100%;
+  }
+}

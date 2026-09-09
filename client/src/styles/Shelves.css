@@ -1,0 +1,680 @@
+/* =========================================================
+   SHELVES PAGE
+   ========================================================= */
+
+.shelves-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.shelves-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.shelves-header h1 {
+  margin-bottom: 8px;
+}
+
+.shelves-header p {
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   CREATE SHELF
+   ========================================================= */
+
+.create-shelf-card {
+  padding: 24px;
+}
+
+.create-shelf-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.create-shelf-form .form-group {
+  flex: 1;
+}
+
+.create-shelf-form input {
+  width: 100%;
+}
+
+.create-shelf-form button {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   SHELF GRID
+   ========================================================= */
+
+.shelves-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.shelf-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.shelf-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 0;
+}
+
+.shelf-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--surface-soft);
+  font-size: 21px;
+}
+
+.shelf-card-menu {
+  display: flex;
+  align-items: center;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.icon-button:hover {
+  box-shadow: none;
+}
+
+.danger-icon-button {
+  color: #b42318;
+  background: #fff7f7;
+  border-color: #f3c2c2;
+}
+
+.danger-icon-button:hover {
+  color: #991b1b;
+  background: #ffecec;
+}
+
+/* =========================================================
+   SHELF CONTENT
+   ========================================================= */
+
+.shelf-card-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 18px 20px;
+}
+
+.shelf-card-content h2 {
+  margin-bottom: 5px;
+  font-size: 19px;
+}
+
+.shelf-card-content > p {
+  margin-bottom: 18px;
+}
+
+.shelf-book-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shelf-book-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: var(--surface-soft);
+}
+
+.shelf-book-item > span {
+  flex-shrink: 0;
+}
+
+.shelf-book-item > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.shelf-book-item strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shelf-book-item small {
+  overflow: hidden;
+  margin-top: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty-shelf-preview {
+  display: flex;
+  align-items: center;
+  min-height: 90px;
+  padding: 16px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* =========================================================
+   SHELF FOOTER
+   ========================================================= */
+
+.shelf-card-footer {
+  padding: 0 20px 20px;
+}
+
+.shelf-card-footer button {
+  width: 100%;
+}
+
+/* =========================================================
+   STATES
+   ========================================================= */
+
+.shelf-state {
+  padding: 70px 24px;
+  text-align: center;
+}
+
+.shelf-state h2 {
+  margin-bottom: 8px;
+}
+
+.shelf-state p {
+  margin-bottom: 20px;
+}
+
+.shelf-error {
+  padding: 16px 20px;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+  .shelves-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .shelves-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .shelves-header button {
+    align-self: flex-start;
+  }
+
+  .create-shelf-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .create-shelf-form button {
+    width: 100%;
+  }
+
+  .shelves-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================================================
+   SHELF DETAILS
+   ========================================================= */
+
+.shelf-details-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.shelf-details-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.shelf-details-header h1 {
+  margin: 8px 0 6px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+.shelf-details-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: var(--surface-soft);
+  font-size: 32px;
+}
+
+/* =========================================================
+   ADD BOOK
+   ========================================================= */
+
+.add-book-shelf-card {
+  padding: 24px;
+}
+
+.add-book-shelf-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.add-book-shelf-form .form-group {
+  flex: 1;
+}
+
+.add-book-shelf-form select {
+  width: 100%;
+}
+
+.add-book-shelf-form button {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   BOOKS
+   ========================================================= */
+
+.shelf-books-heading {
+  margin-bottom: 14px;
+}
+
+.shelf-details-books {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shelf-detail-book {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+}
+
+.book-cover-placeholder {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 68px;
+  border-radius: 8px;
+  background: var(--surface-soft);
+  font-size: 24px;
+}
+
+.shelf-detail-book-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.shelf-detail-book-info h3 {
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+.shelf-detail-book-info p {
+  margin-bottom: 4px;
+}
+
+.secondary-button {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.secondary-button:hover {
+  background: var(--surface-soft);
+}
+
+.danger-button {
+  background: #fff7f7;
+  color: #b42318;
+  border: 1px solid #f3c2c2;
+}
+
+.danger-button:hover {
+  background: #ffecec;
+  color: #991b1b;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .shelf-details-header {
+    align-items: flex-start;
+  }
+
+  .shelf-details-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
+  }
+
+  .add-book-shelf-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .add-book-shelf-form button {
+    width: 100%;
+  }
+
+  .shelf-detail-book {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .shelf-detail-book-info {
+    width: calc(100% - 68px);
+  }
+
+  .shelf-detail-book button {
+    flex: 1;
+  }
+}
+/* =========================================================
+   COLLABORATORS
+   ========================================================= */
+
+.collaborators-card {
+  padding: 24px;
+}
+
+.share-shelf-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.share-shelf-form .form-group:first-child {
+  flex: 1;
+}
+
+.share-shelf-form .role-field {
+  width: 220px;
+}
+
+.share-shelf-form input,
+.share-shelf-form select {
+  width: 100%;
+}
+
+.share-shelf-form button {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   COLLABORATOR LIST
+   ========================================================= */
+
+.collaborator-list {
+  margin-top: 28px;
+}
+
+.collaborator-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.collaborator-list-heading h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.collaborator-list-heading > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  font-size: 12px;
+}
+
+.collaborator-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.collaborator-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.collaborator-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.collaborator-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.collaborator-info strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collaborator-info small {
+  overflow: hidden;
+  margin-top: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.editor-role {
+  background: #eef4ff;
+  color: #2456a6;
+}
+
+.viewer-role {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.remove-collaborator-button {
+  padding: 7px 10px;
+  border: 1px solid #f3c2c2;
+  border-radius: 7px;
+  background: #fff7f7;
+  color: #b42318;
+  box-shadow: none;
+  font-size: 12px;
+}
+
+.remove-collaborator-button:hover {
+  background: #ffecec;
+  box-shadow: none;
+}
+
+.empty-collaborators {
+  padding: 30px 20px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.empty-collaborators .empty-icon {
+  margin-bottom: 8px;
+}
+
+.empty-collaborators p {
+  margin-bottom: 4px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.empty-collaborators small {
+  display: block;
+}
+
+/* =========================================================
+   SHARED SHELF NOTICE
+   ========================================================= */
+
+.shared-shelf-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-soft);
+}
+
+.shared-shelf-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 20px;
+}
+
+.shared-shelf-notice strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.shared-shelf-notice p {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* =========================================================
+   RESPONSIVE COLLABORATORS
+   ========================================================= */
+
+@media (max-width: 800px) {
+  .share-shelf-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .share-shelf-form .role-field {
+    width: 100%;
+  }
+
+  .share-shelf-form button {
+    width: 100%;
+  }
+
+  .collaborator-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .collaborator-info {
+    width: calc(100% - 52px);
+  }
+
+  .role-badge {
+    margin-left: 50px;
+  }
+
+  .remove-collaborator-button {
+    margin-left: auto;
+  }
+}
