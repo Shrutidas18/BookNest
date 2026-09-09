@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Link,
   Navigate,
@@ -13,14 +13,21 @@ import Dashboard from './pages/Dashboard';
 import AddBook from './pages/AddBook';
 import Library from './pages/Library';
 import EditBook from './pages/EditBook';
+import BookDetails from './pages/BookDetails';
 import Shelves from './pages/Shelves';
 import ShelfDetails from './pages/ShelfDetails';
 import Lending from './pages/Lending';
 
 import api, { setAccessToken } from './services/api';
+import {
+  connectSocket,
+  disconnectSocket,
+} from './services/socket';
 
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('booknest_access_token');
+  const token = localStorage.getItem(
+    'booknest_access_token'
+  );
 
   if (!token) {
     return <Navigate to="/login" replace />;
@@ -40,10 +47,15 @@ function Navigation() {
     try {
       await api.post('/auth/logout');
     } catch {
-      // Even if the server request fails, clear the local session.
+      // Even if the server request fails,
+      // clear the local session.
     } finally {
+      disconnectSocket();
       setAccessToken(null);
-      navigate('/login', { replace: true });
+
+      navigate('/login', {
+        replace: true,
+      });
     }
   }
 
@@ -101,13 +113,28 @@ function Navigation() {
 }
 
 export default function App() {
+  useEffect(() => {
+    const token = localStorage.getItem(
+      'booknest_access_token'
+    );
+
+    if (token) {
+      connectSocket();
+    }
+
+    return () => {
+      // Do not disconnect here.
+      // React StrictMode can mount/unmount effects during
+      // development, and Socket.io handles reconnection itself.
+    };
+  }, []);
+
   return (
     <div className="app">
       <Navigation />
 
       <main className="container">
         <Routes>
-
           {/* Dashboard */}
           <Route
             path="/"
@@ -138,7 +165,17 @@ export default function App() {
             }
           />
 
-          {/* Edit Book */}
+          {/* Read-only Book Details */}
+          <Route
+            path="/books/:id"
+            element={
+              <ProtectedRoute>
+                <BookDetails />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Edit Own Book */}
           <Route
             path="/books/:id/edit"
             element={
@@ -194,7 +231,6 @@ export default function App() {
             path="*"
             element={<Navigate to="/" replace />}
           />
-
         </Routes>
       </main>
     </div>

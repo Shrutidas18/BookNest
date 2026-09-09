@@ -678,3 +678,23 @@
     margin-left: auto;
   }
 }
+.shelf-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.shelf-title-row h2 {
+  min-width: 0;
+}
+
+.shelf-role-badge {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.shelf-owner {
+  margin-top: -4px;
+  font-size: 13px;
+}

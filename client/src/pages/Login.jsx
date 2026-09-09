@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import api, { setAccessToken } from '../services/api';
+import { connectSocket } from '../services/socket';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -33,6 +34,10 @@ export default function Login() {
       const { data } = await api.post('/auth/login', form);
 
       setAccessToken(data.accessToken);
+
+      // Establish the authenticated realtime connection
+      // after the access token has been stored.
+      connectSocket();
 
       navigate('/', { replace: true });
     } catch (err) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { connectSocket } from '../services/socket';
 
 function formatDate(date) {
   if (!date) return '—';
@@ -28,8 +29,11 @@ export default function Lending() {
   const [lending, setLending] = useState(false);
   const [returningId, setReturningId] = useState(null);
 
-  async function loadLendingData() {
-    setLoading(true);
+  async function loadLendingData(showLoading = true) {
+    if (showLoading) {
+      setLoading(true);
+    }
+
     setError('');
 
     try {
@@ -69,19 +73,78 @@ export default function Lending() {
           : []
       );
     } catch (err) {
-      console.error('LENDING LOAD ERROR:', err);
+      console.error(
+        'LENDING LOAD ERROR:',
+        err
+      );
 
       setError(
         err.response?.data?.message ||
           'Could not load lending information.'
       );
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   }
 
   useEffect(() => {
     loadLendingData();
+  }, []);
+
+  /*
+   * Realtime lending updates.
+   *
+   * The socket event tells us that something changed.
+   * We then fetch the latest lending state from the API
+   * instead of trusting the socket payload as our source
+   * of truth.
+   */
+  useEffect(() => {
+    const socket = connectSocket();
+
+    if (!socket) {
+      return undefined;
+    }
+
+    function handleLendingCreated() {
+      console.log(
+        'Realtime lending created — refreshing lending data.'
+      );
+
+      loadLendingData(false);
+    }
+
+    function handleLendingReturned() {
+      console.log(
+        'Realtime lending returned — refreshing lending data.'
+      );
+
+      loadLendingData(false);
+    }
+
+    socket.on(
+      'lending:created',
+      handleLendingCreated
+    );
+
+    socket.on(
+      'lending:returned',
+      handleLendingReturned
+    );
+
+    return () => {
+      socket.off(
+        'lending:created',
+        handleLendingCreated
+      );
+
+      socket.off(
+        'lending:returned',
+        handleLendingReturned
+      );
+    };
   }, []);
 
   const lentBookIds = new Set(
@@ -95,7 +158,10 @@ export default function Lending() {
   async function handleLendBook(e) {
     e.preventDefault();
 
-    if (!selectedBookId || !borrowerEmail.trim()) {
+    if (
+      !selectedBookId ||
+      !borrowerEmail.trim()
+    ) {
       setError(
         'Select a book and enter the borrower email.'
       );
@@ -109,16 +175,21 @@ export default function Lending() {
       await api.post(
         `/lending/books/${selectedBookId}`,
         {
-          email: borrowerEmail.trim().toLowerCase(),
+          email: borrowerEmail
+            .trim()
+            .toLowerCase(),
         }
       );
 
       setSelectedBookId('');
       setBorrowerEmail('');
 
-      await loadLendingData();
+      await loadLendingData(false);
     } catch (err) {
-      console.error('LEND BOOK ERROR:', err);
+      console.error(
+        'LEND BOOK ERROR:',
+        err
+      );
 
       setError(
         err.response?.data?.message ||
@@ -129,7 +200,9 @@ export default function Lending() {
     }
   }
 
-  async function handleReturnBook(lendingRecord) {
+  async function handleReturnBook(
+    lendingRecord
+  ) {
     const title =
       lendingRecord.book?.title ||
       'this book';
@@ -150,9 +223,12 @@ export default function Lending() {
         `/lending/${lendingRecord.id}/return`
       );
 
-      await loadLendingData();
+      await loadLendingData(false);
     } catch (err) {
-      console.error('RETURN BOOK ERROR:', err);
+      console.error(
+        'RETURN BOOK ERROR:',
+        err
+      );
 
       setError(
         err.response?.data?.message ||
@@ -178,10 +254,7 @@ export default function Lending() {
   return (
     <div className="lending-page">
 
-      {/* =====================================================
-          HEADER
-          ===================================================== */}
-
+      {/* HEADER */}
       <section className="lending-header">
         <div>
           <p className="eyebrow">
@@ -203,10 +276,7 @@ export default function Lending() {
         </div>
       </section>
 
-      {/* =====================================================
-          ERROR
-          ===================================================== */}
-
+      {/* ERROR */}
       {error && (
         <section className="card shelf-error">
           <p className="error">
@@ -215,10 +285,7 @@ export default function Lending() {
         </section>
       )}
 
-      {/* =====================================================
-          LEND A BOOK
-          ===================================================== */}
-
+      {/* LEND A BOOK */}
       <section className="card lend-book-card">
         <div className="section-heading">
           <div>
@@ -250,7 +317,9 @@ export default function Lending() {
               id="lending-book"
               value={selectedBookId}
               onChange={(e) => {
-                setSelectedBookId(e.target.value);
+                setSelectedBookId(
+                  e.target.value
+                );
                 setError('');
               }}
             >
@@ -283,7 +352,9 @@ export default function Lending() {
               placeholder="bob@booknest.test"
               value={borrowerEmail}
               onChange={(e) => {
-                setBorrowerEmail(e.target.value);
+                setBorrowerEmail(
+                  e.target.value
+                );
                 setError('');
               }}
             />
@@ -304,10 +375,7 @@ export default function Lending() {
         </form>
       </section>
 
-      {/* =====================================================
-          BOOKS I'VE LENT
-          ===================================================== */}
-
+      {/* BOOKS I'VE LENT */}
       <section>
         <div className="section-heading">
           <div>
@@ -338,72 +406,77 @@ export default function Lending() {
           </section>
         ) : (
           <div className="lending-list">
-            {lentBooks.map((lendingRecord) => (
-              <article
-                className="card lending-item"
-                key={lendingRecord.id}
-              >
-                <div className="lending-book-icon">
-                  📖
-                </div>
+            {lentBooks.map(
+              (lendingRecord) => (
+                <article
+                  className="card lending-item"
+                  key={lendingRecord.id}
+                >
+                  <div className="lending-book-icon">
+                    📖
+                  </div>
 
-                <div className="lending-book-info">
-                  <h3>
-                    {lendingRecord.book?.title ||
-                      'Untitled book'}
-                  </h3>
+                  <div className="lending-book-info">
+                    <h3>
+                      {lendingRecord.book
+                        ?.title ||
+                        'Untitled book'}
+                    </h3>
 
-                  <p className="muted">
-                    {lendingRecord.book?.author ||
-                      'Unknown author'}
-                  </p>
+                    <p className="muted">
+                      {lendingRecord.book
+                        ?.author ||
+                        'Unknown author'}
+                    </p>
 
-                  <small className="muted">
-                    Lent to{' '}
-                    {lendingRecord.borrower?.name ||
-                      'Unknown user'}
-                    {' · '}
-                    {lendingRecord.borrower?.email ||
-                      ''}
-                    {' · '}
-                    {formatDate(
-                      lendingRecord.lentAt
-                    )}
-                  </small>
-                </div>
+                    <small className="muted">
+                      Lent to{' '}
+                      {lendingRecord.borrower
+                        ?.name ||
+                        'Unknown user'}
+                      {' · '}
+                      {lendingRecord.borrower
+                        ?.email ||
+                        ''}
+                      {' · '}
+                      {formatDate(
+                        lendingRecord.lentAt
+                      )}
+                    </small>
+                  </div>
 
-                <div className="lending-actions">
-                  <span className="status-badge lending-status">
-                    Lent out
-                  </span>
+                  <div className="lending-actions">
+                    <span className="status-badge lending-status">
+                      Lent out
+                    </span>
 
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={() =>
-                      handleReturnBook(lendingRecord)
-                    }
-                    disabled={
-                      returningId ===
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() =>
+                        handleReturnBook(
+                          lendingRecord
+                        )
+                      }
+                      disabled={
+                        returningId ===
+                        lendingRecord.id
+                      }
+                    >
+                      {returningId ===
                       lendingRecord.id
-                    }
-                  >
-                    {returningId ===
-                    lendingRecord.id
-                      ? 'Returning…'
-                      : 'Mark Returned'}
-                  </button>
-                </div>
-              </article>
-            ))}
+                        ? 'Returning…'
+                        : 'Mark Returned'}
+                    </button>
+                  </div>
+                </article>
+              )
+            )}
           </div>
         )}
       </section>
 
-      {/* =====================================================
-          BOOKS I'VE BORROWED
-          ===================================================== */}
-
+      {/* BOOKS I'VE BORROWED */}
       <section>
         <div className="section-heading">
           <div>
@@ -434,57 +507,62 @@ export default function Lending() {
           </section>
         ) : (
           <div className="lending-list">
-            {borrowedBooks.map((lendingRecord) => (
-              <article
-                className="card lending-item"
-                key={lendingRecord.id}
-              >
-                <div className="lending-book-icon">
-                  📖
-                </div>
+            {borrowedBooks.map(
+              (lendingRecord) => (
+                <article
+                  className="card lending-item"
+                  key={lendingRecord.id}
+                >
+                  <div className="lending-book-icon">
+                    📖
+                  </div>
 
-                <div className="lending-book-info">
-                  <h3>
-                    {lendingRecord.book?.title ||
-                      'Untitled book'}
-                  </h3>
+                  <div className="lending-book-info">
+                    <h3>
+                      {lendingRecord.book
+                        ?.title ||
+                        'Untitled book'}
+                    </h3>
 
-                  <p className="muted">
-                    {lendingRecord.book?.author ||
-                      'Unknown author'}
-                  </p>
+                    <p className="muted">
+                      {lendingRecord.book
+                        ?.author ||
+                        'Unknown author'}
+                    </p>
 
-                  <small className="muted">
-                    Lent by{' '}
-                    {lendingRecord.owner?.name ||
-                      'Unknown user'}
-                    {' · '}
-                    {lendingRecord.owner?.email ||
-                      ''}
-                    {' · '}
-                    {formatDate(
-                      lendingRecord.lentAt
-                    )}
-                  </small>
-                </div>
+                    <small className="muted">
+                      Lent by{' '}
+                      {lendingRecord.owner
+                        ?.name ||
+                        'Unknown user'}
+                      {' · '}
+                      {lendingRecord.owner
+                        ?.email ||
+                        ''}
+                      {' · '}
+                      {formatDate(
+                        lendingRecord.lentAt
+                      )}
+                    </small>
+                  </div>
 
-                <span className="status-badge borrowed-status">
-                  Borrowed
-                </span>
-              </article>
-            ))}
+                  <span className="status-badge borrowed-status">
+                    Borrowed
+                  </span>
+                </article>
+              )
+            )}
           </div>
         )}
       </section>
 
-      {/* =====================================================
-          BACK TO LIBRARY
-          ===================================================== */}
-
+      {/* BACK TO LIBRARY */}
       <button
         type="button"
         className="secondary-button lending-back-button"
-        onClick={() => navigate('/books')}
+        onClick={() =>
+          navigate('/books')
+        }
       >
         ← Back to Library
       </button>

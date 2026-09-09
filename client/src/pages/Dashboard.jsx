@@ -1,6 +1,8 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { connectSocket } from '../services/socket';
 import "../styles/Dashboard.css";
 
 export default function Dashboard() {
@@ -28,6 +30,73 @@ export default function Dashboard() {
     }
 
     loadDashboard();
+  }, []);
+
+  /*
+   * Listen for new activity events in realtime.
+   *
+   * The backend emits:
+   * activity:created
+   *
+   * whenever a new ActivityLog is created for
+   * the current user.
+   */
+  useEffect(() => {
+    const socket = connectSocket();
+
+    if (!socket) {
+      return undefined;
+    }
+
+    function handleActivityCreated(activity) {
+      console.log(
+        'Realtime activity received:',
+        activity
+      );
+
+      setDashboard((currentDashboard) => {
+        if (!currentDashboard) {
+          return currentDashboard;
+        }
+
+        const existingActivities =
+          currentDashboard.recentActivity || [];
+
+        /*
+         * Prevent duplicates in case the same event
+         * is received more than once.
+         */
+        const alreadyExists =
+          existingActivities.some(
+            (item) => item.id === activity.id
+          );
+
+        if (alreadyExists) {
+          return currentDashboard;
+        }
+
+        return {
+          ...currentDashboard,
+
+          recentActivity: [
+            activity,
+            ...existingActivities
+          ].slice(0, 20)
+        };
+      });
+    }
+
+    socket.on(
+      'activity:created',
+      handleActivityCreated
+    );
+
+    return () => {
+      socket.off(
+        'activity:created',
+        handleActivityCreated
+      );
+    };
   }, []);
 
   if (error) {
@@ -140,7 +209,9 @@ export default function Dashboard() {
                 const progress =
                   book.totalPages > 0
                     ? Math.round(
-                        (book.currentPage / book.totalPages) * 100
+                        (book.currentPage /
+                          book.totalPages) *
+                          100
                       )
                     : 0;
 
@@ -164,10 +235,13 @@ export default function Dashboard() {
                     {book.status === 'READING' && (
                       <div className="progress-area">
                         <div className="progress-header">
-                          <span>Reading progress</span>
+                          <span>
+                            Reading progress
+                          </span>
 
                           <span>
-                            {book.currentPage} / {book.totalPages} pages
+                            {book.currentPage} /{' '}
+                            {book.totalPages} pages
                           </span>
                         </div>
 
@@ -175,7 +249,10 @@ export default function Dashboard() {
                           <div
                             className="progress-fill"
                             style={{
-                              width: `${Math.min(progress, 100)}%`,
+                              width: `${Math.min(
+                                progress,
+                                100
+                              )}%`,
                             }}
                           />
                         </div>
@@ -204,18 +281,24 @@ export default function Dashboard() {
               onClick={goToAddBook}
             >
               <strong>+ Add a book</strong>
-              <span>Add a new book to your library</span>
+              <span>
+                Add a new book to your library
+              </span>
             </button>
 
             <button
               type="button"
               className="action-button"
               onClick={() => {
-                alert('Shelf creation is coming next.');
+                alert(
+                  'Shelf creation is coming next.'
+                );
               }}
             >
               <strong>+ Create a shelf</strong>
-              <span>Organize books into a collection</span>
+              <span>
+                Organize books into a collection
+              </span>
             </button>
 
             <button
@@ -224,7 +307,9 @@ export default function Dashboard() {
               onClick={goToLibrary}
             >
               <strong>View my library</strong>
-              <span>Browse and manage all your books</span>
+              <span>
+                Browse and manage all your books
+              </span>
             </button>
           </div>
         </div>
@@ -234,7 +319,9 @@ export default function Dashboard() {
       <section className="card">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">WHAT'S HAPPENING</p>
+            <p className="eyebrow">
+              WHAT'S HAPPENING
+            </p>
             <h2>Recent Activity</h2>
           </div>
         </div>
@@ -256,7 +343,9 @@ export default function Dashboard() {
                   <strong>{item.message}</strong>
 
                   <small>
-                    {new Date(item.createdAt).toLocaleString()}
+                    {new Date(
+                      item.createdAt
+                    ).toLocaleString()}
                   </small>
                 </div>
               </div>
@@ -267,3 +356,4 @@ export default function Dashboard() {
     </>
   );
 }
+

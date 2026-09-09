@@ -6,14 +6,18 @@ export default function Shelves() {
   const navigate = useNavigate();
 
   const [shelves, setShelves] = useState([]);
+  const [sharedShelves, setSharedShelves] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showCreateForm, setShowCreateForm] =
+    useState(false);
   const [shelfName, setShelfName] = useState('');
   const [creating, setCreating] = useState(false);
 
-  const [deletingShelf, setDeletingShelf] = useState(null);
+  const [deletingShelf, setDeletingShelf] =
+    useState(null);
 
   // =========================================================
   // LOAD SHELVES
@@ -24,9 +28,25 @@ export default function Shelves() {
     setError('');
 
     try {
-      const { data } = await api.get('/shelves/mine');
+      const [
+        myShelvesResponse,
+        sharedShelvesResponse,
+      ] = await Promise.all([
+        api.get('/shelves/mine'),
+        api.get('/shelves/shared-with-me'),
+      ]);
 
-      setShelves(Array.isArray(data) ? data : []);
+      setShelves(
+        Array.isArray(myShelvesResponse.data)
+          ? myShelvesResponse.data
+          : []
+      );
+
+      setSharedShelves(
+        Array.isArray(sharedShelvesResponse.data)
+          ? sharedShelvesResponse.data
+          : []
+      );
     } catch (err) {
       console.error('SHELVES ERROR:', err);
 
@@ -130,6 +150,153 @@ export default function Shelves() {
       : 0;
   }
 
+  function getSharedRole(shelf) {
+    return (
+      shelf.role ||
+      shelf.share?.role ||
+      shelf.shelfShare?.role ||
+      shelf.permission ||
+      'VIEWER'
+    );
+  }
+
+  function getOwnerName(shelf) {
+    return (
+      shelf.owner?.name ||
+      shelf.user?.name ||
+      shelf.ownerName ||
+      'Another BookNest user'
+    );
+  }
+
+  // =========================================================
+  // SHELF CARD
+  // =========================================================
+
+  function renderShelfCard(shelf, shared = false) {
+    const bookCount = getBookCount(shelf);
+    const role = getSharedRole(shelf);
+
+    return (
+      <article
+        className="card shelf-card"
+        key={shelf.id}
+      >
+        {/* Shelf Header */}
+        <div className="shelf-card-header">
+          <div className="shelf-icon">
+            🗂️
+          </div>
+
+          {!shared && (
+            <div className="shelf-card-menu">
+              <button
+                type="button"
+                className="icon-button danger-icon-button"
+                onClick={() =>
+                  handleDeleteShelf(shelf)
+                }
+                disabled={
+                  deletingShelf === shelf.id
+                }
+                aria-label={`Delete ${shelf.name}`}
+                title="Delete shelf"
+              >
+                {deletingShelf === shelf.id
+                  ? '…'
+                  : '🗑️'}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Shelf Content */}
+        <div className="shelf-card-content">
+          <div className="shelf-title-row">
+            <h2>
+              {shelf.name}
+            </h2>
+
+            {shared && (
+              <span className="status-badge shelf-role-badge">
+                {role === 'EDITOR'
+                  ? 'Editor'
+                  : 'Viewer'}
+              </span>
+            )}
+          </div>
+
+          <p className="muted">
+            {bookCount}{' '}
+            {bookCount === 1
+              ? 'book'
+              : 'books'}
+          </p>
+
+          {shared && (
+            <p className="muted shelf-owner">
+              Shared by {getOwnerName(shelf)}
+            </p>
+          )}
+
+          {/* Book Preview */}
+          {bookCount > 0 ? (
+            <div className="shelf-book-preview">
+              {shelf.books
+                .slice(0, 3)
+                .map((shelfBook) => (
+                  <div
+                    className="shelf-book-item"
+                    key={shelfBook.id}
+                  >
+                    <span>
+                      📖
+                    </span>
+
+                    <div>
+                      <strong>
+                        {shelfBook.book?.title ||
+                          'Untitled book'}
+                      </strong>
+
+                      <small className="muted">
+                        {shelfBook.book?.author ||
+                          'Unknown author'}
+                      </small>
+                    </div>
+                  </div>
+                ))}
+
+              {bookCount > 3 && (
+                <small className="muted">
+                  + {bookCount - 3} more
+                </small>
+              )}
+            </div>
+          ) : (
+            <div className="empty-shelf-preview">
+              <span>
+                This shelf is empty.
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="shelf-card-footer">
+          <button
+            type="button"
+            onClick={() =>
+              navigate(`/shelves/${shelf.id}`)
+            }
+          >
+            Open Shelf →
+          </button>
+        </div>
+      </article>
+    );
+  }
+
   // =========================================================
   // RENDER
   // =========================================================
@@ -137,7 +304,10 @@ export default function Shelves() {
   return (
     <div className="shelves-page">
 
-      {/* Header */}
+      {/* =====================================================
+          HEADER
+          ===================================================== */}
+
       <section className="shelves-header">
         <div>
           <p className="eyebrow">
@@ -149,15 +319,17 @@ export default function Shelves() {
           </h1>
 
           <p className="muted">
-            Create collections and organize your
-            books however you like.
+            Create collections, organize your
+            books, and collaborate with others.
           </p>
         </div>
 
         <button
           type="button"
           onClick={() =>
-            setShowCreateForm((previous) => !previous)
+            setShowCreateForm(
+              (previous) => !previous
+            )
           }
         >
           {showCreateForm
@@ -166,7 +338,10 @@ export default function Shelves() {
         </button>
       </section>
 
-      {/* Error */}
+      {/* =====================================================
+          ERROR
+          ===================================================== */}
+
       {error && (
         <section className="card shelf-error">
           <p className="error">
@@ -175,10 +350,12 @@ export default function Shelves() {
         </section>
       )}
 
-      {/* Create Shelf */}
+      {/* =====================================================
+          CREATE SHELF
+          ===================================================== */}
+
       {showCreateForm && (
         <section className="card create-shelf-card">
-
           <div className="section-heading">
             <div>
               <p className="eyebrow">
@@ -226,169 +403,121 @@ export default function Shelves() {
                 : 'Create Shelf'}
             </button>
           </form>
-
         </section>
       )}
 
-      {/* Loading */}
+      {/* =====================================================
+          LOADING
+          ===================================================== */}
+
       {loading ? (
         <section className="card shelf-state">
           <p className="muted">
             Loading your shelves…
           </p>
         </section>
-      ) : shelves.length === 0 ? (
-
-        /* Empty State */
-        <section className="card shelf-state">
-
-          <div className="empty-icon">
-            🗂️
-          </div>
-
-          <h2>
-            No shelves yet
-          </h2>
-
-          <p className="muted">
-            Create your first shelf to start
-            organizing your books.
-          </p>
-
-          <button
-            type="button"
-            onClick={() =>
-              setShowCreateForm(true)
-            }
-          >
-            + Create your first shelf
-          </button>
-
-        </section>
-
       ) : (
+        <>
+          {/* =================================================
+              MY SHELVES
+              ================================================= */}
 
-        /* Shelf Grid */
-        <section className="shelves-grid">
+          <section>
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">
+                  YOUR COLLECTIONS
+                </p>
 
-          {shelves.map((shelf) => (
-            <article
-              className="card shelf-card"
-              key={shelf.id}
-            >
+                <h2>
+                  My Shelves
+                </h2>
+              </div>
+            </div>
 
-              {/* Shelf Header */}
-              <div className="shelf-card-header">
-
-                <div className="shelf-icon">
+            {shelves.length === 0 ? (
+              <section className="card shelf-state">
+                <div className="empty-icon">
                   🗂️
                 </div>
 
-                <div className="shelf-card-menu">
-                  <button
-                    type="button"
-                    className="icon-button danger-icon-button"
-                    onClick={() =>
-                      handleDeleteShelf(shelf)
-                    }
-                    disabled={
-                      deletingShelf === shelf.id
-                    }
-                    aria-label={`Delete ${shelf.name}`}
-                    title="Delete shelf"
-                  >
-                    {deletingShelf === shelf.id
-                      ? '…'
-                      : '🗑️'}
-                  </button>
-                </div>
-
-              </div>
-
-              {/* Shelf Content */}
-              <div className="shelf-card-content">
-
                 <h2>
-                  {shelf.name}
+                  No shelves yet
                 </h2>
 
                 <p className="muted">
-                  {getBookCount(shelf)}{' '}
-                  {getBookCount(shelf) === 1
-                    ? 'book'
-                    : 'books'}
+                  Create your first shelf to start
+                  organizing your books.
                 </p>
-
-                {/* Book Preview */}
-                {getBookCount(shelf) > 0 ? (
-                  <div className="shelf-book-preview">
-
-                    {shelf.books
-                      .slice(0, 3)
-                      .map((shelfBook) => (
-                        <div
-                          className="shelf-book-item"
-                          key={shelfBook.id}
-                        >
-                          <span>
-                            📖
-                          </span>
-
-                          <div>
-                            <strong>
-                              {shelfBook.book?.title ||
-                                'Untitled book'}
-                            </strong>
-
-                            <small className="muted">
-                              {shelfBook.book?.author ||
-                                'Unknown author'}
-                            </small>
-                          </div>
-                        </div>
-                      ))}
-
-                    {getBookCount(shelf) > 3 && (
-                      <small className="muted">
-                        +{' '}
-                        {getBookCount(shelf) - 3}{' '}
-                        more
-                      </small>
-                    )}
-
-                  </div>
-                ) : (
-                  <div className="empty-shelf-preview">
-                    <span>
-                      This shelf is empty.
-                    </span>
-                  </div>
-                )}
-
-              </div>
-
-              {/* Footer */}
-              <div className="shelf-card-footer">
 
                 <button
                   type="button"
                   onClick={() =>
-                    navigate(
-                      `/shelves/${shelf.id}`
-                    )
+                    setShowCreateForm(true)
                   }
                 >
-                  Open Shelf →
+                  + Create your first shelf
                 </button>
-
+              </section>
+            ) : (
+              <div className="shelves-grid">
+                {shelves.map((shelf) =>
+                  renderShelfCard(shelf)
+                )}
               </div>
+            )}
+          </section>
 
-            </article>
-          ))}
+          {/* =================================================
+              SHARED WITH ME
+              ================================================= */}
 
-        </section>
+          <section>
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">
+                  COLLABORATION
+                </p>
+
+                <h2>
+                  Shared With Me
+                </h2>
+
+                <p className="muted">
+                  Shelves other BookNest users have
+                  shared with you.
+                </p>
+              </div>
+            </div>
+
+            {sharedShelves.length === 0 ? (
+              <section className="card shelf-state">
+                <div className="empty-icon">
+                  🤝
+                </div>
+
+                <h2>
+                  No shared shelves
+                </h2>
+
+                <p className="muted">
+                  When someone shares a shelf with
+                  you, it will appear here.
+                </p>
+              </section>
+            ) : (
+              <div className="shelves-grid">
+                {sharedShelves.map((shelf) =>
+                  renderShelfCard(
+                    shelf,
+                    true
+                  )
+                )}
+              </div>
+            )}
+          </section>
+        </>
       )}
-
     </div>
   );
 }

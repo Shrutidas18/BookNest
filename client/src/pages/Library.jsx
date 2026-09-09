@@ -21,17 +21,20 @@ export default function Library() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
 
-  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState('desc');
 
   const [page, setPage] = useState(1);
+
   const [pagination, setPagination] = useState({
     page: 1,
+    pageSize: BOOKS_PER_PAGE,
     totalPages: 1,
     totalItems: 0,
   });
 
-  const [updatingProgress, setUpdatingProgress] = useState({});
+  const [updatingProgress, setUpdatingProgress] =
+    useState({});
 
   // =========================================================
   // LOAD BOOKS
@@ -41,85 +44,67 @@ export default function Library() {
     setLoading(true);
     setError('');
 
+    const params = {
+      page: customParams.page ?? page,
+      pageSize:
+        customParams.pageSize ??
+        BOOKS_PER_PAGE,
+      search:
+        customParams.search !== undefined
+          ? customParams.search
+          : search.trim(),
+      status:
+        customParams.status !== undefined
+          ? customParams.status
+          : status,
+      sort:
+        customParams.sort !== undefined
+          ? customParams.sort
+          : sortBy,
+      order:
+        customParams.order !== undefined
+          ? customParams.order
+          : sortOrder,
+    };
+
+    Object.keys(params).forEach((key) => {
+      if (params[key] === '') {
+        delete params[key];
+      }
+    });
+
+    console.log(
+      'LOADING BOOKS WITH PARAMS:',
+      params
+    );
+
     try {
-      const params = {
-        page: customParams.page ?? page,
-        limit: customParams.limit ?? BOOKS_PER_PAGE,
-        search:
-          customParams.search !== undefined
-            ? customParams.search
-            : search.trim(),
-        status:
-          customParams.status !== undefined
-            ? customParams.status
-            : status,
-        sortBy:
-          customParams.sortBy !== undefined
-            ? customParams.sortBy
-            : sortBy,
-        sortOrder:
-          customParams.sortOrder !== undefined
-            ? customParams.sortOrder
-            : sortOrder,
-      };
-
-      // Remove empty query parameters
-      Object.keys(params).forEach((key) => {
-        if (params[key] === '') {
-          delete params[key];
-        }
-      });
-
-      console.log('LOADING BOOKS WITH PARAMS:', params);
-
       const { data } = await api.get('/books', {
         params,
       });
 
-      console.log('LIBRARY API RESPONSE:', data);
+      console.log(
+        'LIBRARY API RESPONSE:',
+        data
+      );
 
-      // -------------------------------------------------------
-      // Support different backend response formats
-      // -------------------------------------------------------
+      setBooks(data.items || []);
 
-      let receivedBooks = [];
-
-      if (Array.isArray(data)) {
-        receivedBooks = data;
-      } else if (Array.isArray(data.items)) {
-        receivedBooks = data.items;
-      } else if (Array.isArray(data.books)) {
-        receivedBooks = data.books;
-      }
-
-      setBooks(receivedBooks);
-
-      // -------------------------------------------------------
-      // Pagination
-      // -------------------------------------------------------
-
-      if (data.pagination) {
-        setPagination({
-          page: Number(data.pagination.page) || params.page,
-          totalPages:
-            Number(data.pagination.totalPages) || 1,
-          totalItems:
-            Number(data.pagination.totalItems) ||
-            Number(data.pagination.total) ||
-            receivedBooks.length,
-        });
-      } else {
-        setPagination({
-          page: Number(params.page) || 1,
-          totalPages:
-            receivedBooks.length === BOOKS_PER_PAGE
-              ? Number(params.page) + 1
-              : Number(params.page),
-          totalItems: receivedBooks.length,
-        });
-      }
+      setPagination({
+        page: Number(data.page) || 1,
+        pageSize:
+          Number(data.pageSize) ||
+          BOOKS_PER_PAGE,
+        totalPages:
+          Number(data.totalPages) || 1,
+        totalItems:
+          Number(data.total) || 0,
+      });
     } catch (err) {
-      console.error('LIBRARY ERROR:', err);
+      console.error(
+        'LIBRARY ERROR:',
+        err
+      );
 
       setError(
         err.response?.data?.message ||
@@ -130,6 +115,7 @@ export default function Library() {
 
       setPagination({
         page: 1,
+        pageSize: BOOKS_PER_PAGE,
         totalPages: 1,
         totalItems: 0,
       });
@@ -161,8 +147,8 @@ export default function Library() {
       page: 1,
       search: search.trim(),
       status,
-      sortBy,
-      sortOrder,
+      sort: sortBy,
+      order: sortOrder,
     });
   }
 
@@ -180,8 +166,8 @@ export default function Library() {
       page: 1,
       search: search.trim(),
       status: newStatus,
-      sortBy,
-      sortOrder,
+      sort: sortBy,
+      order: sortOrder,
     });
   }
 
@@ -199,8 +185,8 @@ export default function Library() {
       page: 1,
       search: search.trim(),
       status,
-      sortBy: newSortBy,
-      sortOrder,
+      sort: newSortBy,
+      order: sortOrder,
     });
   }
 
@@ -214,8 +200,8 @@ export default function Library() {
       page: 1,
       search: search.trim(),
       status,
-      sortBy,
-      sortOrder: newSortOrder,
+      sort: sortBy,
+      order: newSortOrder,
     });
   }
 
@@ -226,7 +212,7 @@ export default function Library() {
   function clearFilters() {
     setSearch('');
     setStatus('');
-    setSortBy('createdAt');
+    setSortBy('date');
     setSortOrder('desc');
     setPage(1);
 
@@ -234,8 +220,8 @@ export default function Library() {
       page: 1,
       search: '',
       status: '',
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
+      sort: 'date',
+      order: 'desc',
     });
   }
 
@@ -257,8 +243,8 @@ export default function Library() {
       page: newPage,
       search: search.trim(),
       status,
-      sortBy,
-      sortOrder,
+      sort: sortBy,
+      order: sortOrder,
     });
   }
 
@@ -282,7 +268,10 @@ export default function Library() {
     );
   }
 
-  async function updateBookProgress(book, newPage) {
+  async function updateBookProgress(
+    book,
+    newPage
+  ) {
     if (
       !book.totalPages ||
       book.totalPages <= 0
@@ -369,7 +358,10 @@ export default function Library() {
   function formatStatus(bookStatus) {
     return (
       STATUS_LABELS[bookStatus] ||
-      String(bookStatus || '').replaceAll('_', ' ')
+      String(bookStatus || '').replaceAll(
+        '_',
+        ' '
+      )
     );
   }
 
@@ -392,14 +384,16 @@ export default function Library() {
           </h1>
 
           <p className="muted">
-            Browse, search, sort, and manage everything
-            in your BookNest collection.
+            Browse, search, sort, and manage
+            everything in your BookNest collection.
           </p>
         </div>
 
         <button
           type="button"
-          onClick={() => navigate('/books/add')}
+          onClick={() =>
+            navigate('/books/add')
+          }
         >
           + Add Book
         </button>
@@ -422,7 +416,10 @@ export default function Library() {
             }
           />
 
-          <button type="submit">
+          <button
+            type="submit"
+            disabled={loading}
+          >
             Search
           </button>
         </form>
@@ -434,6 +431,7 @@ export default function Library() {
             value={status}
             onChange={handleStatusChange}
             aria-label="Filter by status"
+            disabled={loading}
           >
             <option value="">
               All statuses
@@ -457,8 +455,9 @@ export default function Library() {
             value={sortBy}
             onChange={handleSortByChange}
             aria-label="Sort books by"
+            disabled={loading}
           >
-            <option value="createdAt">
+            <option value="date">
               Recently Added
             </option>
 
@@ -473,6 +472,10 @@ export default function Library() {
             <option value="totalPages">
               Page Count
             </option>
+
+            <option value="rating">
+              Rating
+            </option>
           </select>
 
           {/* Sort direction */}
@@ -480,6 +483,7 @@ export default function Library() {
             value={sortOrder}
             onChange={handleSortOrderChange}
             aria-label="Sort direction"
+            disabled={loading}
           >
             <option value="desc">
               Descending
@@ -495,6 +499,7 @@ export default function Library() {
             type="button"
             className="secondary-button"
             onClick={clearFilters}
+            disabled={loading}
           >
             Clear
           </button>
@@ -579,7 +584,9 @@ export default function Library() {
                 Number(book.totalPages) > 0;
 
               const currentPage =
-                Number(book.currentPage || 0);
+                Number(
+                  book.currentPage || 0
+                );
 
               return (
                 <article
@@ -644,16 +651,19 @@ export default function Library() {
                             {book.totalPages} pages
                           </span>
 
-                          {book.status !== 'FINISHED' && (
+                          {book.status !==
+                            'FINISHED' && (
                             <span className="muted">
-                              {book.status === 'READING'
+                              {book.status ===
+                              'READING'
                                 ? 'Currently reading'
                                 : 'Ready to start'}
                             </span>
                           )}
                         </div>
 
-                        {book.status !== 'FINISHED' && (
+                        {book.status !==
+                          'FINISHED' && (
                           <div className="progress-controls">
 
                             <button
@@ -664,7 +674,9 @@ export default function Library() {
                                 currentPage <= 0
                               }
                               onClick={() =>
-                                decreaseProgress(book)
+                                decreaseProgress(
+                                  book
+                                )
                               }
                               aria-label={`Decrease ${book.title} progress by 10 pages`}
                             >
@@ -676,7 +688,9 @@ export default function Library() {
                               min="0"
                               max={book.totalPages}
                               value={currentPage}
-                              disabled={isUpdating}
+                              disabled={
+                                isUpdating
+                              }
                               onChange={(e) => {
                                 const value =
                                   e.target.value;
@@ -704,7 +718,9 @@ export default function Library() {
                                   book.totalPages
                               }
                               onClick={() =>
-                                increaseProgress(book)
+                                increaseProgress(
+                                  book
+                                )
                               }
                               aria-label={`Increase ${book.title} progress by 10 pages`}
                             >
@@ -720,7 +736,8 @@ export default function Library() {
                           </small>
                         )}
 
-                        {book.status === 'FINISHED' && (
+                        {book.status ===
+                          'FINISHED' && (
                           <small className="progress-complete">
                             ✓ Finished
                           </small>
@@ -730,10 +747,13 @@ export default function Library() {
                     )}
 
                     {/* Rating */}
-                    {book.status === 'FINISHED' &&
+                    {book.status ===
+                      'FINISHED' &&
                       book.rating && (
                         <div className="book-rating">
-                          {'★'.repeat(book.rating)}
+                          {'★'.repeat(
+                            book.rating
+                          )}
                           {'☆'.repeat(
                             5 - book.rating
                           )}
@@ -778,7 +798,9 @@ export default function Library() {
               <button
                 type="button"
                 className="secondary-button"
-                disabled={page <= 1}
+                disabled={
+                  loading || page <= 1
+                }
                 onClick={() =>
                   goToPage(page - 1)
                 }
@@ -803,6 +825,7 @@ export default function Library() {
                         ? 'pagination-page active'
                         : 'pagination-page'
                     }
+                    disabled={loading}
                     onClick={() =>
                       goToPage(pageNumber)
                     }
@@ -817,8 +840,9 @@ export default function Library() {
                 type="button"
                 className="secondary-button"
                 disabled={
+                  loading ||
                   page >=
-                  pagination.totalPages
+                    pagination.totalPages
                 }
                 onClick={() =>
                   goToPage(page + 1)

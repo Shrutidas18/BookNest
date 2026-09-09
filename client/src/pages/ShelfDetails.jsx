@@ -1,10 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  Link,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import api from '../services/api';
+import { connectSocket, joinShelf } from '../services/socket';
 
 function getCurrentUserId() {
   try {
-    const token = localStorage.getItem('booknest_access_token');
+    const token = localStorage.getItem(
+      'booknest_access_token'
+    );
 
     if (!token) {
       return null;
@@ -14,7 +25,12 @@ function getCurrentUserId() {
       atob(token.split('.')[1])
     );
 
-    return payload.sub || payload.userId || payload.id || null;
+    return (
+      payload.sub ||
+      payload.userId ||
+      payload.id ||
+      null
+    );
   } catch {
     return null;
   }
@@ -33,32 +49,49 @@ export default function ShelfDetails() {
   const [loadingBooks, setLoadingBooks] = useState(true);
   const [error, setError] = useState('');
 
-  const [selectedBookId, setSelectedBookId] = useState('');
-  const [addingBook, setAddingBook] = useState(false);
-  const [removingBookId, setRemovingBookId] = useState(null);
+  const [selectedBookId, setSelectedBookId] =
+    useState('');
+  const [addingBook, setAddingBook] =
+    useState(false);
+  const [removingBookId, setRemovingBookId] =
+    useState(null);
 
-  const [availableBooks, setAvailableBooks] = useState([]);
+  const [availableBooks, setAvailableBooks] =
+    useState([]);
 
   // =========================================================
   // COLLABORATION STATE
   // =========================================================
 
-  const [collaboratorEmail, setCollaboratorEmail] = useState('');
-  const [collaboratorRole, setCollaboratorRole] = useState('VIEWER');
-  const [sharing, setSharing] = useState(false);
-  const [removingCollaboratorId, setRemovingCollaboratorId] =
-    useState(null);
+  const [collaboratorEmail, setCollaboratorEmail] =
+    useState('');
+
+  const [collaboratorRole, setCollaboratorRole] =
+    useState('VIEWER');
+
+  const [sharing, setSharing] =
+    useState(false);
+
+  const [
+    removingCollaboratorId,
+    setRemovingCollaboratorId,
+  ] = useState(null);
 
   // =========================================================
   // LOAD SHELF
   // =========================================================
 
-  async function loadShelf() {
-    setLoading(true);
+  async function loadShelf(showLoading = true) {
+    if (showLoading) {
+      setLoading(true);
+    }
+
     setError('');
 
     try {
-      const { data } = await api.get(`/shelves/${id}`);
+      const { data } = await api.get(
+        `/shelves/${id}`
+      );
 
       setShelf(data);
 
@@ -68,14 +101,19 @@ export default function ShelfDetails() {
 
       setBooks(shelfBooks);
     } catch (err) {
-      console.error('SHELF DETAILS ERROR:', err);
+      console.error(
+        'SHELF DETAILS ERROR:',
+        err
+      );
 
       setError(
         err.response?.data?.message ||
           'Could not load this shelf.'
       );
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   }
 
@@ -101,11 +139,18 @@ export default function ShelfDetails() {
 
       setAvailableBooks(items);
     } catch (err) {
-      console.error('BOOKS ERROR:', err);
+      console.error(
+        'BOOKS ERROR:',
+        err
+      );
     } finally {
       setLoadingBooks(false);
     }
   }
+
+  // =========================================================
+  // INITIAL LOAD
+  // =========================================================
 
   useEffect(() => {
     loadShelf();
@@ -113,26 +158,206 @@ export default function ShelfDetails() {
   }, [id]);
 
   // =========================================================
+  // REALTIME SHELF UPDATES
+  // =========================================================
+
+  useEffect(() => {
+    const socket = connectSocket();
+
+    if (!socket) {
+      return undefined;
+    }
+
+    // Explicitly join this shelf's realtime room.
+    joinShelf(id);
+
+    function handleBookAdded(payload) {
+      if (payload?.shelfId !== id) {
+        return;
+      }
+
+      console.log(
+        'Realtime shelf book added — refreshing shelf.'
+      );
+
+      loadShelf(false);
+    }
+
+    function handleBookRemoved(payload) {
+      if (payload?.shelfId !== id) {
+        return;
+      }
+
+      console.log(
+        'Realtime shelf book removed — refreshing shelf.'
+      );
+
+      loadShelf(false);
+    }
+
+    function handleShelfShared(payload) {
+      if (payload?.shelfId !== id) {
+        return;
+      }
+
+      console.log(
+        'Realtime shelf sharing update — refreshing shelf.'
+      );
+
+      loadShelf(false);
+    }
+
+    function handleRoleChanged(payload) {
+      if (payload?.shelfId !== id) {
+        return;
+      }
+
+      console.log(
+        'Realtime collaborator role change — refreshing shelf.'
+      );
+
+      loadShelf(false);
+    }
+
+    function handleCollaboratorRemoved(payload) {
+      if (payload?.shelfId !== id) {
+        return;
+      }
+
+      console.log(
+        'Realtime collaborator removal — refreshing shelf.'
+      );
+
+      // If the current user was removed, the REST
+      // request will return 403 and the page will
+      // show the appropriate error state.
+      if (
+        payload?.collaboratorId ===
+        currentUserId
+      ) {
+        loadShelf(false);
+        return;
+      }
+
+      loadShelf(false);
+    }
+
+    function handleShelfDeleted(payload) {
+      if (payload?.shelfId !== id) {
+        return;
+      }
+
+      console.log(
+        'Realtime shelf deleted — leaving shelf.'
+      );
+
+      navigate('/shelves', {
+        replace: true,
+      });
+    }
+
+    socket.on(
+      'shelf:book-added',
+      handleBookAdded
+    );
+
+    socket.on(
+      'shelf:book-removed',
+      handleBookRemoved
+    );
+
+    socket.on(
+      'shelf:shared',
+      handleShelfShared
+    );
+
+    socket.on(
+      'shelf:role-changed',
+      handleRoleChanged
+    );
+
+    socket.on(
+      'shelf:collaborator-removed',
+      handleCollaboratorRemoved
+    );
+
+    socket.on(
+      'shelf:deleted',
+      handleShelfDeleted
+    );
+
+    return () => {
+      socket.off(
+        'shelf:book-added',
+        handleBookAdded
+      );
+
+      socket.off(
+        'shelf:book-removed',
+        handleBookRemoved
+      );
+
+      socket.off(
+        'shelf:shared',
+        handleShelfShared
+      );
+
+      socket.off(
+        'shelf:role-changed',
+        handleRoleChanged
+      );
+
+      socket.off(
+        'shelf:collaborator-removed',
+        handleCollaboratorRemoved
+      );
+
+      socket.off(
+        'shelf:deleted',
+        handleShelfDeleted
+      );
+    };
+  }, [id, currentUserId, navigate]);
+
+  // =========================================================
   // SHELF HELPERS
   // =========================================================
 
   const booksAlreadyOnShelf = useMemo(() => {
     return new Set(
-      books.map((shelfBook) => shelfBook.bookId)
+      books.map(
+        (shelfBook) => shelfBook.bookId
+      )
     );
   }, [books]);
 
-  const booksAvailableToAdd = availableBooks.filter(
-    (book) => !booksAlreadyOnShelf.has(book.id)
-  );
+  const booksAvailableToAdd =
+    availableBooks.filter(
+      (book) =>
+        !booksAlreadyOnShelf.has(book.id)
+    );
 
-  const collaborators = Array.isArray(shelf?.collaborators)
+  const collaborators = Array.isArray(
+    shelf?.collaborators
+  )
     ? shelf.collaborators
     : [];
 
   const isOwner =
     Boolean(currentUserId) &&
     shelf?.ownerId === currentUserId;
+
+  const currentCollaborator =
+    collaborators.find(
+      (collaborator) =>
+        collaborator.userId === currentUserId
+    );
+
+  const isEditor =
+    isOwner ||
+    currentCollaborator?.role === 'EDITOR';
+
+  const canManageBooks = isEditor;
 
   // =========================================================
   // ADD BOOK
@@ -141,7 +366,7 @@ export default function ShelfDetails() {
   async function handleAddBook(e) {
     e.preventDefault();
 
-    if (!selectedBookId) {
+    if (!selectedBookId || !canManageBooks) {
       return;
     }
 
@@ -189,8 +414,13 @@ export default function ShelfDetails() {
   // =========================================================
 
   async function handleRemoveBook(shelfBook) {
+    if (!canManageBooks) {
+      return;
+    }
+
     const bookTitle =
-      shelfBook.book?.title || 'this book';
+      shelfBook.book?.title ||
+      'this book';
 
     const confirmed = window.confirm(
       `Remove "${bookTitle}" from this shelf?`
@@ -200,7 +430,10 @@ export default function ShelfDetails() {
       return;
     }
 
-    setRemovingBookId(shelfBook.bookId);
+    setRemovingBookId(
+      shelfBook.bookId
+    );
+
     setError('');
 
     try {
@@ -210,7 +443,9 @@ export default function ShelfDetails() {
 
       setBooks((previousBooks) =>
         previousBooks.filter(
-          (item) => item.bookId !== shelfBook.bookId
+          (item) =>
+            item.bookId !==
+            shelfBook.bookId
         )
       );
     } catch (err) {
@@ -235,10 +470,16 @@ export default function ShelfDetails() {
   async function handleShareShelf(e) {
     e.preventDefault();
 
-    const email = collaboratorEmail.trim().toLowerCase();
+    const email =
+      collaboratorEmail
+        .trim()
+        .toLowerCase();
 
     if (!email) {
-      setError('Enter the collaborator email address.');
+      setError(
+        'Enter the collaborator email address.'
+      );
+
       return;
     }
 
@@ -257,41 +498,49 @@ export default function ShelfDetails() {
       const existingCollaborator =
         collaborators.find(
           (collaborator) =>
-            collaborator.userId === data.userId
+            collaborator.userId ===
+            data.userId
         );
 
       if (existingCollaborator) {
-        setShelf((previousShelf) => ({
-          ...previousShelf,
-          collaborators:
-            previousShelf.collaborators.map(
-              (collaborator) =>
-                collaborator.userId === data.userId
-                  ? {
-                      ...collaborator,
-                      role: data.role,
-                    }
-                  : collaborator
-            ),
-        }));
+        setShelf(
+          (previousShelf) => ({
+            ...previousShelf,
+            collaborators:
+              previousShelf.collaborators.map(
+                (collaborator) =>
+                  collaborator.userId ===
+                  data.userId
+                    ? {
+                        ...collaborator,
+                        role: data.role,
+                      }
+                    : collaborator
+              ),
+          })
+        );
       } else {
         const userFromResponse =
           data.user || {
             id: data.userId,
-            name: email.split('@')[0],
+            name:
+              email.split('@')[0],
             email,
           };
 
-        setShelf((previousShelf) => ({
-          ...previousShelf,
-          collaborators: [
-            ...(previousShelf.collaborators || []),
-            {
-              ...data,
-              user: userFromResponse,
-            },
-          ],
-        }));
+        setShelf(
+          (previousShelf) => ({
+            ...previousShelf,
+            collaborators: [
+              ...(previousShelf.collaborators ||
+                []),
+              {
+                ...data,
+                user: userFromResponse,
+              },
+            ],
+          })
+        );
       }
 
       setCollaboratorEmail('');
@@ -331,7 +580,10 @@ export default function ShelfDetails() {
       return;
     }
 
-    setRemovingCollaboratorId(collaborator.id);
+    setRemovingCollaboratorId(
+      collaborator.id
+    );
+
     setError('');
 
     try {
@@ -339,14 +591,17 @@ export default function ShelfDetails() {
         `/shelves/${id}/collaborators/${collaborator.id}`
       );
 
-      setShelf((previousShelf) => ({
-        ...previousShelf,
-        collaborators:
-          previousShelf.collaborators.filter(
-            (item) =>
-              item.id !== collaborator.id
-          ),
-      }));
+      setShelf(
+        (previousShelf) => ({
+          ...previousShelf,
+          collaborators:
+            previousShelf.collaborators.filter(
+              (item) =>
+                item.id !==
+                collaborator.id
+            ),
+        })
+      );
     } catch (err) {
       console.error(
         'REMOVE COLLABORATOR ERROR:',
@@ -469,83 +724,85 @@ export default function ShelfDetails() {
           ADD BOOK
           ===================================================== */}
 
-      <section className="card add-book-shelf-card">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">
-              ADD A BOOK
+      {canManageBooks && (
+        <section className="card add-book-shelf-card">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">
+                ADD A BOOK
+              </p>
+
+              <h2>
+                Add from your library
+              </h2>
+            </div>
+          </div>
+
+          {loadingBooks ? (
+            <p className="muted">
+              Loading your books…
             </p>
+          ) : booksAvailableToAdd.length === 0 ? (
+            <div className="empty-shelf-preview">
+              <span>
+                All of your books are already on
+                this shelf.
+              </span>
+            </div>
+          ) : (
+            <form
+              className="add-book-shelf-form"
+              onSubmit={handleAddBook}
+            >
+              <div className="form-group">
+                <label htmlFor="shelf-book">
+                  Select a book
+                </label>
 
-            <h2>
-              Add from your library
-            </h2>
-          </div>
-        </div>
+                <select
+                  id="shelf-book"
+                  value={selectedBookId}
+                  onChange={(e) =>
+                    setSelectedBookId(
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">
+                    Choose a book…
+                  </option>
 
-        {loadingBooks ? (
-          <p className="muted">
-            Loading your books…
-          </p>
-        ) : booksAvailableToAdd.length === 0 ? (
-          <div className="empty-shelf-preview">
-            <span>
-              All of your books are already on
-              this shelf.
-            </span>
-          </div>
-        ) : (
-          <form
-            className="add-book-shelf-form"
-            onSubmit={handleAddBook}
-          >
-            <div className="form-group">
-              <label htmlFor="shelf-book">
-                Select a book
-              </label>
+                  {booksAvailableToAdd.map(
+                    (book) => (
+                      <option
+                        key={book.id}
+                        value={book.id}
+                      >
+                        {book.title}
+                        {book.author
+                          ? ` — ${book.author}`
+                          : ''}
+                      </option>
+                    )
+                  )}
+                </select>
+              </div>
 
-              <select
-                id="shelf-book"
-                value={selectedBookId}
-                onChange={(e) =>
-                  setSelectedBookId(
-                    e.target.value
-                  )
+              <button
+                type="submit"
+                disabled={
+                  addingBook ||
+                  !selectedBookId
                 }
               >
-                <option value="">
-                  Choose a book…
-                </option>
-
-                {booksAvailableToAdd.map(
-                  (book) => (
-                    <option
-                      key={book.id}
-                      value={book.id}
-                    >
-                      {book.title}
-                      {book.author
-                        ? ` — ${book.author}`
-                        : ''}
-                    </option>
-                  )
-                )}
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              disabled={
-                addingBook ||
-                !selectedBookId
-              }
-            >
-              {addingBook
-                ? 'Adding…'
-                : 'Add to Shelf'}
-            </button>
-          </form>
-        )}
-      </section>
+                {addingBook
+                  ? 'Adding…'
+                  : 'Add to Shelf'}
+              </button>
+            </form>
+          )}
+        </section>
+      )}
 
       {/* =====================================================
           BOOKS
@@ -575,8 +832,9 @@ export default function ShelfDetails() {
             </h2>
 
             <p className="muted">
-              Add books from your library to
-              build this collection.
+              {canManageBooks
+                ? 'Add books from your library to build this collection.'
+                : 'There are currently no books on this shelf.'}
             </p>
           </section>
         ) : (
@@ -613,36 +871,42 @@ export default function ShelfDetails() {
                   ) : null}
                 </div>
 
+                {/* READ-ONLY BOOK DETAILS */}
+
                 <button
                   type="button"
                   className="secondary-button"
                   onClick={() =>
                     navigate(
-                      `/books/${shelfBook.bookId}/edit`
+                      `/books/${shelfBook.bookId}`
                     )
                   }
                 >
                   View Book
                 </button>
 
-                <button
-                  type="button"
-                  className="danger-button"
-                  onClick={() =>
-                    handleRemoveBook(
-                      shelfBook
-                    )
-                  }
-                  disabled={
-                    removingBookId ===
+                {/* ONLY OWNER / EDITOR CAN REMOVE */}
+
+                {canManageBooks && (
+                  <button
+                    type="button"
+                    className="danger-button"
+                    onClick={() =>
+                      handleRemoveBook(
+                        shelfBook
+                      )
+                    }
+                    disabled={
+                      removingBookId ===
+                      shelfBook.bookId
+                    }
+                  >
+                    {removingBookId ===
                     shelfBook.bookId
-                  }
-                >
-                  {removingBookId ===
-                  shelfBook.bookId
-                    ? 'Removing…'
-                    : 'Remove'}
-                </button>
+                      ? 'Removing…'
+                      : 'Remove'}
+                  </button>
+                )}
               </article>
             ))}
           </div>

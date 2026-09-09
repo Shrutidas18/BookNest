@@ -29,46 +29,61 @@ export default function EditBook() {
         setLoading(true);
         setError('');
 
-        // Your backend does not have GET /books/:id.
-        // Load the library and find the selected book.
+        // Load enough books from the server to find the
+        // selected book using the current API contract.
         const { data } = await api.get('/books', {
           params: {
-            limit: 100,
+            page: 1,
+            pageSize: 50,
           },
         });
 
-        console.log('EDIT BOOK LIBRARY RESPONSE:', data);
+        console.log(
+          'EDIT BOOK LIBRARY RESPONSE:',
+          data
+        );
 
-        let books = [];
-
-        if (Array.isArray(data)) {
-          books = data;
-        } else if (Array.isArray(data.items)) {
-          books = data.items;
-        } else if (Array.isArray(data.books)) {
-          books = data.books;
-        }
+        const books = Array.isArray(data.items)
+          ? data.items
+          : Array.isArray(data)
+          ? data
+          : [];
 
         const book = books.find(
-          (item) => String(item.id) === String(id)
+          (item) =>
+            String(item.id) === String(id)
         );
 
         if (!book) {
-          setError('Book not found in your library.');
+          setError(
+            'Book not found in your library.'
+          );
           return;
         }
+
+        console.log(
+          'BOOK LOADED FOR EDIT:',
+          book
+        );
 
         setForm({
           title: book.title || '',
           author: book.author || '',
-          totalPages: book.totalPages || '',
-          currentPage: book.currentPage ?? 0,
-          status: book.status || 'WANT_TO_READ',
-          rating: book.rating ?? '',
+          totalPages:
+            book.totalPages ?? '',
+          currentPage:
+            book.currentPage ?? 0,
+          status:
+            book.status || 'WANT_TO_READ',
+          rating:
+            book.rating ?? '',
           notes: book.notes || '',
         });
       } catch (err) {
-        console.error('LOAD BOOK ERROR:', err);
+        console.error(
+          'LOAD BOOK ERROR:',
+          err
+        );
 
         setError(
           err.response?.data?.message ||
@@ -102,44 +117,72 @@ export default function EditBook() {
     setSuccess('');
 
     try {
-      const totalPages = Number(form.totalPages);
-      const currentPage = Number(form.currentPage);
+      const totalPages = Number(
+        form.totalPages
+      );
+
+      const currentPage = Number(
+        form.currentPage
+      );
+
+      // ---------------------------------------------
+      // Frontend validation
+      // ---------------------------------------------
 
       if (!form.title.trim()) {
-        setError('Book title is required.');
-        setSaving(false);
+        setError(
+          'Book title is required.'
+        );
         return;
       }
 
       if (!form.author.trim()) {
-        setError('Author is required.');
-        setSaving(false);
+        setError(
+          'Author is required.'
+        );
         return;
       }
 
-      if (!totalPages || totalPages <= 0) {
-        setError('Total pages must be greater than 0.');
-        setSaving(false);
+      if (
+        !Number.isInteger(totalPages) ||
+        totalPages <= 0
+      ) {
+        setError(
+          'Total pages must be a positive integer.'
+        );
         return;
       }
 
-      if (currentPage < 0 || currentPage > totalPages) {
+      if (
+        !Number.isInteger(currentPage) ||
+        currentPage < 0 ||
+        currentPage > totalPages
+      ) {
         setError(
           'Current page must be between 0 and total pages.'
         );
-        setSaving(false);
         return;
       }
 
       if (
         form.rating !== '' &&
-        (Number(form.rating) < 1 ||
-          Number(form.rating) > 5)
+        (
+          !Number.isInteger(
+            Number(form.rating)
+          ) ||
+          Number(form.rating) < 1 ||
+          Number(form.rating) > 5
+        )
       ) {
-        setError('Rating must be between 1 and 5.');
-        setSaving(false);
+        setError(
+          'Rating must be between 1 and 5.'
+        );
         return;
       }
+
+      // ---------------------------------------------
+      // Build payload
+      // ---------------------------------------------
 
       const payload = {
         title: form.title.trim(),
@@ -151,24 +194,81 @@ export default function EditBook() {
           form.rating === ''
             ? null
             : Number(form.rating),
-        notes: form.notes.trim() || null,
+        notes:
+          form.notes.trim() || null,
       };
 
-      console.log('UPDATING BOOK:', payload);
+      console.log(
+        'UPDATING BOOK:',
+        payload
+      );
 
-      // Backend uses PATCH /books/:id
-      await api.patch(`/books/${id}`, payload);
+      // ---------------------------------------------
+      // Save to backend
+      // ---------------------------------------------
 
-      setSuccess('Book updated successfully.');
+      const { data: updatedBook } =
+        await api.patch(
+          `/books/${id}`,
+          payload
+        );
 
+      console.log(
+        'UPDATED BOOK FROM SERVER:',
+        updatedBook
+      );
+
+      // ---------------------------------------------
+      // Confirm the server saved the page
+      // ---------------------------------------------
+
+      if (
+        Number(updatedBook.currentPage) !==
+        currentPage
+      ) {
+        throw new Error(
+          'The server did not save the current page correctly.'
+        );
+      }
+
+      // Keep local form state synchronized with
+      // exactly what the backend returned.
+      setForm({
+        title:
+          updatedBook.title || '',
+        author:
+          updatedBook.author || '',
+        totalPages:
+          updatedBook.totalPages ?? '',
+        currentPage:
+          updatedBook.currentPage ?? 0,
+        status:
+          updatedBook.status ||
+          'WANT_TO_READ',
+        rating:
+          updatedBook.rating ?? '',
+        notes:
+          updatedBook.notes || '',
+      });
+
+      setSuccess(
+        `Book updated successfully. Current page: ${updatedBook.currentPage}/${updatedBook.totalPages}.`
+      );
+
+      // Give the success message a moment to be
+      // visible before returning to the library.
       setTimeout(() => {
         navigate('/books');
       }, 700);
     } catch (err) {
-      console.error('UPDATE BOOK ERROR:', err);
+      console.error(
+        'UPDATE BOOK ERROR:',
+        err
+      );
 
       setError(
         err.response?.data?.message ||
+          err.message ||
           'Could not update this book.'
       );
     } finally {
@@ -189,11 +289,16 @@ export default function EditBook() {
     setError('');
 
     try {
-      await api.delete(`/books/${id}`);
+      await api.delete(
+        `/books/${id}`
+      );
 
       navigate('/books');
     } catch (err) {
-      console.error('DELETE BOOK ERROR:', err);
+      console.error(
+        'DELETE BOOK ERROR:',
+        err
+      );
 
       setError(
         err.response?.data?.message ||
@@ -216,6 +321,7 @@ export default function EditBook() {
 
   return (
     <div className="edit-book-page">
+
       <section className="edit-book-header">
         <div>
           <p className="eyebrow">
@@ -233,7 +339,10 @@ export default function EditBook() {
         <button
           type="button"
           className="secondary-button"
-          onClick={() => navigate('/books')}
+          onClick={() =>
+            navigate('/books')
+          }
+          disabled={saving || deleting}
         >
           ← Back to Library
         </button>
@@ -256,10 +365,12 @@ export default function EditBook() {
       )}
 
       <section className="card edit-book-card">
+
         <form
           className="edit-book-form"
           onSubmit={handleSubmit}
         >
+
           <div className="form-group">
             <label htmlFor="title">
               Book Title
@@ -273,6 +384,7 @@ export default function EditBook() {
               onChange={handleChange}
               placeholder="Enter book title"
               required
+              disabled={saving}
             />
           </div>
 
@@ -289,10 +401,12 @@ export default function EditBook() {
               onChange={handleChange}
               placeholder="Enter author name"
               required
+              disabled={saving}
             />
           </div>
 
           <div className="form-row">
+
             <div className="form-group">
               <label htmlFor="totalPages">
                 Total Pages
@@ -306,6 +420,7 @@ export default function EditBook() {
                 value={form.totalPages}
                 onChange={handleChange}
                 required
+                disabled={saving}
               />
             </div>
 
@@ -319,11 +434,16 @@ export default function EditBook() {
                 name="currentPage"
                 type="number"
                 min="0"
-                max={form.totalPages || undefined}
+                max={
+                  form.totalPages ||
+                  undefined
+                }
                 value={form.currentPage}
                 onChange={handleChange}
+                disabled={saving}
               />
             </div>
+
           </div>
 
           <div className="form-group">
@@ -336,6 +456,7 @@ export default function EditBook() {
               name="status"
               value={form.status}
               onChange={handleChange}
+              disabled={saving}
             >
               <option value="WANT_TO_READ">
                 Want to Read
@@ -361,6 +482,7 @@ export default function EditBook() {
               name="rating"
               value={form.rating}
               onChange={handleChange}
+              disabled={saving}
             >
               <option value="">
                 No rating
@@ -400,13 +522,17 @@ export default function EditBook() {
               value={form.notes}
               onChange={handleChange}
               placeholder="Add your notes about this book..."
+              disabled={saving}
             />
           </div>
 
           <div className="edit-book-actions">
+
             <button
               type="submit"
-              disabled={saving || deleting}
+              disabled={
+                saving || deleting
+              }
             >
               {saving
                 ? 'Saving…'
@@ -417,15 +543,21 @@ export default function EditBook() {
               type="button"
               className="danger-button"
               onClick={handleDelete}
-              disabled={saving || deleting}
+              disabled={
+                saving || deleting
+              }
             >
               {deleting
                 ? 'Deleting…'
                 : 'Delete Book'}
             </button>
+
           </div>
+
         </form>
+
       </section>
     </div>
   );
 }
+
