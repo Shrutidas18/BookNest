@@ -28,5 +28,3 @@ Backend: http://localhost:5000
 ## Authentication design
 The access token is short-lived and used for protected API requests. The refresh token is longer-lived and stored server-side in the database as a hash. The client sends the refresh token as an HttpOnly cookie and can call `/api/auth/refresh` after an access-token expiry.
 
-## Important
-This is an assessment starter rather than a claimed finished submission. Before submission, complete the remaining frontend screens, transparent refresh/retry handling, full socket event broadcasting/scoping, critical tests, clean-clone verification, and the final README details.
