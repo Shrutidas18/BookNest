@@ -42,10 +42,6 @@ export default function AddBook() {
       form.currentPage || 0
     );
 
-    // -----------------------------
-    // Frontend validation
-    // -----------------------------
-
     if (!title) {
       setError('Book title is required.');
       return;

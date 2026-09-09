@@ -1,7 +1,3 @@
-/* =========================================================
-   SHELVES PAGE
-   ========================================================= */
-
 .shelves-page {
   display: flex;
   flex-direction: column;
@@ -21,11 +17,8 @@
 
 .shelves-header p {
   margin-bottom: 0;
+  max-width: 600px;
 }
-
-/* =========================================================
-   CREATE SHELF
-   ========================================================= */
 
 .create-shelf-card {
   padding: 24px;
@@ -40,68 +33,97 @@
 
 .create-shelf-form .form-group {
   flex: 1;
+  min-width: 0;
 }
 
 .create-shelf-form input {
   width: 100%;
+  min-width: 0;
 }
 
 .create-shelf-form button {
   white-space: nowrap;
+  flex-shrink: 0;
 }
-
-/* =========================================================
-   SHELF GRID
-   ========================================================= */
 
 .shelves-grid {
   display: grid;
   grid-template-columns:
     repeat(3, minmax(0, 1fr));
-  gap: 20px;
+
+  gap: 18px;
 }
 
 .shelf-card {
   display: flex;
   flex-direction: column;
+
   min-width: 0;
   overflow: hidden;
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
+}
+
+.shelf-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: #d7dad3;
 }
 
 .shelf-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 20px 0;
+
+  gap: 12px;
+
+  padding: 18px 18px 0;
 }
 
 .shelf-icon {
   display: flex;
   align-items: center;
   justify-content: center;
+
   width: 44px;
   height: 44px;
+
+  flex-shrink: 0;
+
   border-radius: 12px;
+
   background: var(--surface-soft);
+
   font-size: 21px;
 }
 
 .shelf-card-menu {
   display: flex;
   align-items: center;
+  gap: 6px;
 }
 
 .icon-button {
   display: flex;
   align-items: center;
   justify-content: center;
+
   width: 34px;
   height: 34px;
+
   padding: 0;
+
   border: 1px solid var(--border);
   border-radius: 8px;
+
   background: var(--surface);
+
   box-shadow: none;
+
+  flex-shrink: 0;
 }
 
 .icon-button:hover {
@@ -119,63 +141,116 @@
   background: #ffecec;
 }
 
-/* =========================================================
-   SHELF CONTENT
-   ========================================================= */
-
 .shelf-card-content {
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 18px 20px;
+
+  min-width: 0;
+
+  padding: 16px 18px 18px;
 }
 
-.shelf-card-content h2 {
+.shelf-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.shelf-title-row h2 {
+  min-width: 0;
   margin-bottom: 5px;
-  font-size: 19px;
+
+  font-size: 18px;
+
+  overflow-wrap: anywhere;
+}
+
+.shelf-role-badge {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.shelf-owner {
+  margin-top: -2px;
+  margin-bottom: 16px;
+
+  font-size: 13px;
+
+  overflow-wrap: anywhere;
 }
 
 .shelf-card-content > p {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .shelf-book-preview {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+
+  min-width: 0;
 }
 
 .shelf-book-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+
+  gap: 9px;
+
   min-width: 0;
+
   padding: 9px 10px;
+
   border-radius: 9px;
+
   background: var(--surface-soft);
 }
 
 .shelf-book-item > span {
-  flex-shrink: 0;
+  width: 30px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 30px;
+
+  border-radius: 5px;
+
+  background: var(--surface-warm);
+
+  font-size: 16px;
 }
 
 .shelf-book-item > div {
   display: flex;
+  flex: 1;
   flex-direction: column;
+
   min-width: 0;
 }
 
 .shelf-book-item strong {
   overflow: hidden;
+
   color: var(--text);
+
   font-size: 13px;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .shelf-book-item small {
   overflow: hidden;
+
   margin-top: 2px;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -183,29 +258,26 @@
 .empty-shelf-preview {
   display: flex;
   align-items: center;
-  min-height: 90px;
-  padding: 16px;
+
+  min-height: 84px;
+
+  padding: 14px;
+
   border: 1px dashed var(--border);
   border-radius: 10px;
+
   color: var(--muted);
+
   font-size: 13px;
 }
 
-/* =========================================================
-   SHELF FOOTER
-   ========================================================= */
-
 .shelf-card-footer {
-  padding: 0 20px 20px;
+  padding: 0 18px 18px;
 }
 
 .shelf-card-footer button {
   width: 100%;
 }
-
-/* =========================================================
-   STATES
-   ========================================================= */
 
 .shelf-state {
   padding: 70px 24px;
@@ -224,65 +296,37 @@
   padding: 16px 20px;
 }
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 1000px) {
-  .shelves-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 700px) {
-  .shelves-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .shelves-header button {
-    align-self: flex-start;
-  }
-
-  .create-shelf-form {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .create-shelf-form button {
-    width: 100%;
-  }
-
-  .shelves-grid {
-    grid-template-columns: 1fr;
-  }
-}
-/* =========================================================
-   SHELF DETAILS
-   ========================================================= */
-
 .shelf-details-page {
   display: flex;
   flex-direction: column;
   gap: 24px;
+
+  min-width: 0;
 }
 
 .shelf-details-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+
   gap: 24px;
+
+  min-width: 0;
 }
 
 .shelf-details-header h1 {
   margin: 8px 0 6px;
+
+  overflow-wrap: anywhere;
 }
 
 .back-link {
   display: inline-block;
+
   margin-bottom: 12px;
+
   color: var(--muted);
+
   font-size: 14px;
   text-decoration: none;
 }
@@ -295,16 +339,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   width: 72px;
   height: 72px;
+
+  flex-shrink: 0;
+
   border-radius: 18px;
+
   background: var(--surface-soft);
+
   font-size: 32px;
 }
-
-/* =========================================================
-   ADD BOOK
-   ========================================================= */
 
 .add-book-shelf-card {
   padding: 24px;
@@ -313,25 +359,26 @@
 .add-book-shelf-form {
   display: flex;
   align-items: flex-end;
+
   gap: 16px;
+
   margin-top: 20px;
 }
 
 .add-book-shelf-form .form-group {
   flex: 1;
+  min-width: 0;
 }
 
 .add-book-shelf-form select {
   width: 100%;
+  min-width: 0;
 }
 
 .add-book-shelf-form button {
   white-space: nowrap;
+  flex-shrink: 0;
 }
-
-/* =========================================================
-   BOOKS
-   ========================================================= */
 
 .shelf-books-heading {
   margin-bottom: 14px;
@@ -340,103 +387,104 @@
 .shelf-details-books {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .shelf-detail-book {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 18px;
+  flex-wrap: wrap;
+
+  gap: 12px 14px;
+
+  min-width: 0;
+
+  padding: 15px 16px;
 }
 
 .book-cover-placeholder {
   display: flex;
-  flex-shrink: 0;
   align-items: center;
   justify-content: center;
+
   width: 52px;
   height: 68px;
+
+  flex-shrink: 0;
+
   border-radius: 8px;
+
   background: var(--surface-soft);
+
   font-size: 24px;
 }
 
 .shelf-detail-book-info {
-  flex: 1;
+  flex: 1 1 180px;
+
   min-width: 0;
 }
 
 .shelf-detail-book-info h3 {
   margin-bottom: 4px;
+
   font-size: 16px;
+
+  overflow-wrap: anywhere;
 }
 
 .shelf-detail-book-info p {
   margin-bottom: 4px;
+
+  overflow-wrap: anywhere;
+}
+
+.shelf-detail-book > button,
+.shelf-detail-book > a {
+  width: auto;
+
+  min-height: 34px;
+
+  flex: 0 0 auto;
+
+  padding: 7px 10px;
+
+  font-size: 11px;
+
+  white-space: nowrap;
 }
 
 .secondary-button {
   background: var(--surface);
   color: var(--text);
+
   border: 1px solid var(--border);
+
+  box-shadow: none;
 }
 
 .secondary-button:hover {
   background: var(--surface-soft);
+  color: var(--text);
+
+  box-shadow: none;
 }
 
 .danger-button {
   background: #fff7f7;
   color: #b42318;
+
   border: 1px solid #f3c2c2;
+
+  box-shadow: none;
 }
 
 .danger-button:hover {
   background: #ffecec;
   color: #991b1b;
+
+  box-shadow: none;
 }
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 700px) {
-  .shelf-details-header {
-    align-items: flex-start;
-  }
-
-  .shelf-details-icon {
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
-  }
-
-  .add-book-shelf-form {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .add-book-shelf-form button {
-    width: 100%;
-  }
-
-  .shelf-detail-book {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .shelf-detail-book-info {
-    width: calc(100% - 68px);
-  }
-
-  .shelf-detail-book button {
-    flex: 1;
-  }
-}
-/* =========================================================
-   COLLABORATORS
-   ========================================================= */
 
 .collaborators-card {
   padding: 24px;
@@ -445,30 +493,32 @@
 .share-shelf-form {
   display: flex;
   align-items: flex-end;
-  gap: 16px;
+
+  gap: 14px;
+
   margin-top: 22px;
 }
 
 .share-shelf-form .form-group:first-child {
   flex: 1;
+  min-width: 0;
 }
 
 .share-shelf-form .role-field {
-  width: 220px;
+  width: 200px;
+  flex-shrink: 0;
 }
 
 .share-shelf-form input,
 .share-shelf-form select {
   width: 100%;
+  min-width: 0;
 }
 
 .share-shelf-form button {
   white-space: nowrap;
+  flex-shrink: 0;
 }
-
-/* =========================================================
-   COLLABORATOR LIST
-   ========================================================= */
 
 .collaborator-list {
   margin-top: 28px;
@@ -478,6 +528,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  gap: 12px;
+
   margin-bottom: 12px;
 }
 
@@ -490,11 +543,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   min-width: 28px;
   height: 28px;
+
   padding: 0 8px;
+
   border-radius: 999px;
+
   background: var(--surface-soft);
+
   font-size: 12px;
 }
 
@@ -507,23 +565,34 @@
 .collaborator-item {
   display: flex;
   align-items: center;
+
   gap: 12px;
-  padding: 13px 14px;
+
+  min-width: 0;
+
+  padding: 12px 13px;
+
   border: 1px solid var(--border);
   border-radius: 10px;
+
   background: var(--surface);
 }
 
 .collaborator-avatar {
   display: flex;
-  flex-shrink: 0;
   align-items: center;
   justify-content: center;
+
   width: 38px;
   height: 38px;
+
+  flex-shrink: 0;
+
   border-radius: 50%;
+
   background: var(--surface-soft);
   color: var(--text);
+
   font-size: 14px;
   font-weight: 700;
 }
@@ -532,20 +601,26 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+
   min-width: 0;
 }
 
 .collaborator-info strong {
   overflow: hidden;
+
   color: var(--text);
+
   font-size: 14px;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .collaborator-info small {
   overflow: hidden;
+
   margin-top: 2px;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -554,10 +629,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   padding: 5px 9px;
+
   border-radius: 999px;
+
   font-size: 11px;
   font-weight: 700;
+
+  flex-shrink: 0;
 }
 
 .editor-role {
@@ -572,12 +652,18 @@
 
 .remove-collaborator-button {
   padding: 7px 10px;
+
   border: 1px solid #f3c2c2;
   border-radius: 7px;
+
   background: #fff7f7;
   color: #b42318;
+
   box-shadow: none;
+
   font-size: 12px;
+
+  flex-shrink: 0;
 }
 
 .remove-collaborator-button:hover {
@@ -587,8 +673,10 @@
 
 .empty-collaborators {
   padding: 30px 20px;
+
   border: 1px dashed var(--border);
   border-radius: 10px;
+
   text-align: center;
 }
 
@@ -598,7 +686,9 @@
 
 .empty-collaborators p {
   margin-bottom: 4px;
+
   color: var(--text);
+
   font-weight: 600;
 }
 
@@ -606,30 +696,35 @@
   display: block;
 }
 
-/* =========================================================
-   SHARED SHELF NOTICE
-   ========================================================= */
-
 .shared-shelf-notice {
   display: flex;
   align-items: flex-start;
+
   gap: 14px;
+
   margin-top: 20px;
   padding: 16px;
+
   border: 1px solid var(--border);
   border-radius: 10px;
+
   background: var(--surface-soft);
 }
 
 .shared-shelf-icon {
   display: flex;
-  flex-shrink: 0;
   align-items: center;
   justify-content: center;
+
   width: 42px;
   height: 42px;
+
+  flex-shrink: 0;
+
   border-radius: 10px;
+
   background: var(--surface);
+
   font-size: 20px;
 }
 
@@ -643,58 +738,500 @@
   font-size: 13px;
 }
 
-/* =========================================================
-   RESPONSIVE COLLABORATORS
-   ========================================================= */
+@media (max-width: 1000px) {
+  .shelves-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
 
-@media (max-width: 800px) {
+    gap: 16px;
+  }
+
+  .create-shelf-form {
+    gap: 12px;
+  }
+
   .share-shelf-form {
-    align-items: stretch;
-    flex-direction: column;
+    gap: 12px;
   }
 
   .share-shelf-form .role-field {
+    width: 170px;
+  }
+}
+
+@media (max-width: 700px) {
+  .shelves-header {
+    align-items: stretch;
+
+    flex-direction: column;
+
+    gap: 16px;
+  }
+
+  .shelves-header button {
     width: 100%;
+  }
+
+  .create-shelf-card {
+    padding: 18px;
+  }
+
+  .create-shelf-form {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    align-items: end;
+
+    gap: 8px;
+
+    margin-top: 16px;
+  }
+
+  .create-shelf-form .form-group {
+    min-width: 0;
+  }
+
+  .create-shelf-form button {
+    min-height: 44px;
+  }
+
+  .shelves-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+
+  .shelf-card-header {
+    padding: 12px 12px 0;
+  }
+
+  .shelf-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    font-size: 18px;
+  }
+
+  .icon-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .shelf-card-content {
+    padding: 12px;
+  }
+
+  .shelf-title-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .shelf-title-row h2 {
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .shelf-role-badge {
+    align-self: flex-start;
+  }
+
+  .shelf-owner {
+    margin-bottom: 12px;
+    font-size: 11px;
+  }
+
+  .shelf-card-content > p {
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+
+  .shelf-book-preview {
+    gap: 6px;
+  }
+
+  .shelf-book-item {
+    gap: 7px;
+    padding: 7px;
+  }
+
+  .shelf-book-item > span {
+    width: 26px;
+    height: 34px;
+
+    flex-basis: 26px;
+
+    font-size: 14px;
+  }
+
+  .shelf-book-item strong {
+    font-size: 11px;
+  }
+
+  .shelf-book-item small {
+    font-size: 10px;
+  }
+
+  .empty-shelf-preview {
+    min-height: 70px;
+    padding: 10px;
+
+    font-size: 11px;
+  }
+
+  .shelf-card-footer {
+    padding: 0 12px 12px;
+  }
+
+  .shelf-card-footer button {
+    min-height: 40px;
+
+    padding: 8px;
+
+    font-size: 12px;
+  }
+
+  .shelf-details-header {
+    align-items: flex-start;
+
+    gap: 14px;
+  }
+
+  .shelf-details-icon {
+    width: 56px;
+    height: 56px;
+
+    border-radius: 14px;
+
+    font-size: 24px;
+  }
+
+  .add-book-shelf-card {
+    padding: 18px;
+  }
+
+  .add-book-shelf-form {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    align-items: end;
+
+    gap: 8px;
+
+    margin-top: 16px;
+  }
+
+  .add-book-shelf-form button {
+    min-height: 44px;
+  }
+
+  .shelf-detail-book {
+    align-items: flex-start;
+
+    gap: 9px;
+
+    padding: 12px;
+  }
+
+  .shelf-detail-book .book-cover-placeholder {
+    width: 46px;
+    height: 60px;
+
+    font-size: 20px;
+  }
+
+  .shelf-detail-book-info {
+    flex: 1 1 150px;
+
+    width: auto;
+  }
+
+  .shelf-detail-book-info h3 {
+    font-size: 14px;
+  }
+
+  .shelf-detail-book-info p {
+    font-size: 12px;
+  }
+
+  .shelf-detail-book > button,
+  .shelf-detail-book > a {
+    width: auto;
+
+    min-height: 34px;
+
+    flex: 0 0 auto;
+
+    padding: 6px 9px;
+
+    font-size: 10px;
+  }
+
+  .collaborators-card {
+    padding: 18px;
+  }
+
+  .share-shelf-form {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(110px, 0.7fr);
+
+    gap: 8px;
+
+    align-items: end;
+  }
+
+  .share-shelf-form .form-group:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .share-shelf-form .role-field {
+    width: auto;
   }
 
   .share-shelf-form button {
     width: 100%;
+    min-height: 44px;
   }
 
   .collaborator-item {
     align-items: flex-start;
-    flex-wrap: wrap;
+
+    gap: 9px;
+
+    padding: 11px;
+  }
+
+  .collaborator-avatar {
+    width: 34px;
+    height: 34px;
+
+    font-size: 12px;
   }
 
   .collaborator-info {
-    width: calc(100% - 52px);
+    width: calc(100% - 43px);
+  }
+
+  .collaborator-info strong {
+    font-size: 12px;
+  }
+
+  .collaborator-info small {
+    font-size: 10px;
   }
 
   .role-badge {
-    margin-left: 50px;
+    margin-left: 43px;
   }
 
   .remove-collaborator-button {
     margin-left: auto;
   }
-}
-.shelf-title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+
+  .shared-shelf-notice {
+    gap: 10px;
+
+    padding: 13px;
+  }
+
+  .shared-shelf-icon {
+    width: 36px;
+    height: 36px;
+
+    font-size: 17px;
+  }
+
+  .shared-shelf-notice p {
+    font-size: 12px;
+  }
 }
 
-.shelf-title-row h2 {
-  min-width: 0;
-}
+@media (max-width: 380px) {
+  .shelves-page,
+  .shelf-details-page {
+    gap: 18px;
+  }
 
-.shelf-role-badge {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
+  .shelves-grid {
+    gap: 8px;
+  }
 
-.shelf-owner {
-  margin-top: -4px;
-  font-size: 13px;
+  .create-shelf-card,
+  .add-book-shelf-card,
+  .collaborators-card {
+    padding: 14px;
+  }
+
+  .create-shelf-form {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    gap: 6px;
+  }
+
+  .create-shelf-form button {
+    padding-left: 9px;
+    padding-right: 9px;
+
+    font-size: 12px;
+  }
+
+  .shelf-card-header {
+    padding: 10px 10px 0;
+  }
+
+  .shelf-icon {
+    width: 34px;
+    height: 34px;
+
+    font-size: 16px;
+  }
+
+  .icon-button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .shelf-card-content {
+    padding: 10px;
+  }
+
+  .shelf-title-row h2 {
+    font-size: 14px;
+  }
+
+  .shelf-owner {
+    font-size: 10px;
+  }
+
+  .shelf-card-content > p {
+    font-size: 11px;
+  }
+
+  .shelf-book-item {
+    gap: 6px;
+
+    padding: 6px;
+  }
+
+  .shelf-book-item > span {
+    width: 24px;
+    height: 31px;
+
+    flex-basis: 24px;
+
+    font-size: 13px;
+  }
+
+  .shelf-book-item strong {
+    font-size: 10px;
+  }
+
+  .shelf-book-item small {
+    font-size: 9px;
+  }
+
+  .empty-shelf-preview {
+    min-height: 60px;
+    padding: 8px;
+
+    font-size: 10px;
+  }
+
+  .shelf-card-footer {
+    padding: 0 10px 10px;
+  }
+
+  .shelf-card-footer button {
+    min-height: 38px;
+
+    font-size: 11px;
+  }
+
+  .shelf-details-icon {
+    width: 48px;
+    height: 48px;
+
+    font-size: 21px;
+  }
+
+  .shelf-detail-book {
+    padding: 10px;
+  }
+
+  .shelf-detail-book .book-cover-placeholder {
+    width: 42px;
+    height: 55px;
+
+    font-size: 18px;
+  }
+
+  .shelf-detail-book-info {
+    flex: 1 1 130px;
+
+    width: auto;
+  }
+
+  .shelf-detail-book > button,
+  .shelf-detail-book > a {
+    min-height: 32px;
+
+    padding: 5px 8px;
+
+    font-size: 9px;
+  }
+
+  .add-book-shelf-form {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    gap: 6px;
+  }
+
+  .add-book-shelf-form button {
+    padding-left: 9px;
+    padding-right: 9px;
+
+    font-size: 12px;
+  }
+
+  .share-shelf-form {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(95px, 0.7fr);
+
+    gap: 6px;
+  }
+
+  .share-shelf-form button {
+    font-size: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .collaborator-item {
+    padding: 9px;
+  }
+
+  .role-badge {
+    font-size: 10px;
+  }
+
+  .remove-collaborator-button {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
 }

@@ -1,7 +1,3 @@
-/* =========================================
-   GLOBAL RESET
-   ========================================= */
-
 * {
   box-sizing: border-box;
 }
@@ -39,17 +35,9 @@ a {
   text-decoration: none;
 }
 
-/* =========================================
-   APP
-   ========================================= */
-
 .app {
   min-height: 100vh;
 }
-
-/* =========================================
-   MAIN CONTAINER
-   ========================================= */
 
 .container {
   width: min(
@@ -61,10 +49,6 @@ a {
   padding: 42px 0 70px;
 }
 
-/* =========================================
-   GENERIC CARD
-   ========================================= */
-
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -73,10 +57,6 @@ a {
 
   padding: 24px;
 }
-
-/* =========================================
-   TYPOGRAPHY
-   ========================================= */
 
 h1,
 h2,
@@ -116,10 +96,6 @@ p {
   color: var(--text-muted);
 }
 
-/* =========================================
-   EYEBROW
-   ========================================= */
-
 .eyebrow {
   margin-bottom: 8px;
 
@@ -130,10 +106,6 @@ p {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
-
-/* =========================================
-   BUTTONS
-   ========================================= */
 
 button {
   border: 0;
@@ -166,10 +138,6 @@ button:active:not(:disabled) {
 button:disabled {
   opacity: 0.55;
 }
-
-/* =========================================
-   FORM ELEMENTS
-   ========================================= */
 
 input,
 select,
@@ -219,10 +187,6 @@ textarea {
   min-height: 120px;
 }
 
-/* =========================================
-   FEEDBACK
-   ========================================= */
-
 .error {
   margin: 0;
 
@@ -251,10 +215,6 @@ textarea {
   font-size: 14px;
 }
 
-/* =========================================
-   GENERIC SECTION HEADING
-   ========================================= */
-
 .section-heading {
   display: flex;
   align-items: flex-start;
@@ -273,10 +233,6 @@ textarea {
   margin-bottom: 5px;
 }
 
-/* =========================================
-   RESPONSIVE BASE
-   ========================================= */
-
 @media (max-width: 700px) {
   .container {
     width: min(
@@ -294,5 +250,15 @@ textarea {
 
   h2 {
     font-size: 21px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }

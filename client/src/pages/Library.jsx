@@ -36,10 +36,6 @@ export default function Library() {
   const [updatingProgress, setUpdatingProgress] =
     useState({});
 
-  // =========================================================
-  // LOAD BOOKS
-  // =========================================================
-
   async function loadBooks(customParams = {}) {
     setLoading(true);
     setError('');
@@ -124,19 +120,11 @@ export default function Library() {
     }
   }
 
-  // =========================================================
-  // INITIAL LOAD
-  // =========================================================
-
   useEffect(() => {
     loadBooks({
       page: 1,
     });
   }, []);
-
-  // =========================================================
-  // SEARCH
-  // =========================================================
 
   function handleSearchSubmit(e) {
     e.preventDefault();
@@ -152,10 +140,6 @@ export default function Library() {
     });
   }
 
-  // =========================================================
-  // STATUS FILTER
-  // =========================================================
-
   function handleStatusChange(e) {
     const newStatus = e.target.value;
 
@@ -170,10 +154,6 @@ export default function Library() {
       order: sortOrder,
     });
   }
-
-  // =========================================================
-  // SORT
-  // =========================================================
 
   function handleSortByChange(e) {
     const newSortBy = e.target.value;
@@ -205,10 +185,6 @@ export default function Library() {
     });
   }
 
-  // =========================================================
-  // CLEAR FILTERS
-  // =========================================================
-
   function clearFilters() {
     setSearch('');
     setStatus('');
@@ -224,10 +200,6 @@ export default function Library() {
       order: 'desc',
     });
   }
-
-  // =========================================================
-  // PAGINATION
-  // =========================================================
 
   function goToPage(newPage) {
     if (
@@ -247,10 +219,6 @@ export default function Library() {
       order: sortOrder,
     });
   }
-
-  // =========================================================
-  // BOOK PROGRESS
-  // =========================================================
 
   function getProgress(book) {
     if (
@@ -351,10 +319,6 @@ export default function Library() {
     updateBookProgress(book, newPage);
   }
 
-  // =========================================================
-  // FORMAT STATUS
-  // =========================================================
-
   function formatStatus(bookStatus) {
     return (
       STATUS_LABELS[bookStatus] ||
@@ -364,10 +328,6 @@ export default function Library() {
       )
     );
   }
-
-  // =========================================================
-  // RENDER
-  // =========================================================
 
   return (
     <div className="library-page">

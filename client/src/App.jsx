@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Link,
   Navigate,
@@ -39,11 +39,38 @@ function ProtectedRoute({ children }) {
 function Navigation() {
   const navigate = useNavigate();
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const isAuthenticated = Boolean(
     localStorage.getItem('booknest_access_token')
   );
 
+  /*
+   * Close the mobile menu when the user scrolls.
+   */
+  useEffect(() => {
+    function handleScroll() {
+      setIsMenuOpen(false);
+    }
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  function closeMenu() {
+    setIsMenuOpen(false);
+  }
+
+  function handleNavigation() {
+    closeMenu();
+  }
+
   async function handleLogout() {
+    closeMenu();
+
     try {
       await api.post('/auth/logout');
     } catch {
@@ -61,30 +88,79 @@ function Navigation() {
 
   return (
     <nav className="nav">
-      <Link to="/" className="brand">
-        BookNest
-      </Link>
+      <Link
+  to="/"
+  className="brand"
+  onClick={handleNavigation}
+>
+  <img
+    src="/logo.jpg"
+    alt="BookNest"
+    className="navbar-logo"
+  />
+  <span>BookNest</span>
+</Link>
 
-      <div className="nav-links">
+      {/* Hamburger button */}
+      <button
+        type="button"
+        className="nav-menu-button"
+        onClick={() =>
+          setIsMenuOpen((current) => !current)
+        }
+        aria-label={
+          isMenuOpen
+            ? 'Close navigation menu'
+            : 'Open navigation menu'
+        }
+        aria-expanded={isMenuOpen}
+        aria-controls="navigation-menu"
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      <div
+        id="navigation-menu"
+        className={`nav-links ${
+          isMenuOpen ? 'nav-links-open' : ''
+        }`}
+      >
         {isAuthenticated ? (
           <>
-            <Link to="/">
+            <Link
+              to="/"
+              onClick={handleNavigation}
+            >
               Dashboard
             </Link>
 
-            <Link to="/books">
+            <Link
+              to="/books"
+              onClick={handleNavigation}
+            >
               My Library
             </Link>
 
-            <Link to="/shelves">
+            <Link
+              to="/shelves"
+              onClick={handleNavigation}
+            >
               Shelves
             </Link>
 
-            <Link to="/lending">
+            <Link
+              to="/lending"
+              onClick={handleNavigation}
+            >
               Lending
             </Link>
 
-            <Link to="/books/add">
+            <Link
+              to="/books/add"
+              onClick={handleNavigation}
+            >
               Add Book
             </Link>
 
@@ -98,11 +174,17 @@ function Navigation() {
           </>
         ) : (
           <>
-            <Link to="/login">
+            <Link
+              to="/login"
+              onClick={handleNavigation}
+            >
               Login
             </Link>
 
-            <Link to="/signup">
+            <Link
+              to="/signup"
+              onClick={handleNavigation}
+            >
               Sign up
             </Link>
           </>

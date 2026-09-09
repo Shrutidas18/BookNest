@@ -124,11 +124,6 @@ export default function EditBook() {
       const currentPage = Number(
         form.currentPage
       );
-
-      // ---------------------------------------------
-      // Frontend validation
-      // ---------------------------------------------
-
       if (!form.title.trim()) {
         setError(
           'Book title is required.'
@@ -180,10 +175,6 @@ export default function EditBook() {
         return;
       }
 
-      // ---------------------------------------------
-      // Build payload
-      // ---------------------------------------------
-
       const payload = {
         title: form.title.trim(),
         author: form.author.trim(),
@@ -203,10 +194,6 @@ export default function EditBook() {
         payload
       );
 
-      // ---------------------------------------------
-      // Save to backend
-      // ---------------------------------------------
-
       const { data: updatedBook } =
         await api.patch(
           `/books/${id}`,
@@ -218,10 +205,6 @@ export default function EditBook() {
         updatedBook
       );
 
-      // ---------------------------------------------
-      // Confirm the server saved the page
-      // ---------------------------------------------
-
       if (
         Number(updatedBook.currentPage) !==
         currentPage
@@ -230,9 +213,6 @@ export default function EditBook() {
           'The server did not save the current page correctly.'
         );
       }
-
-      // Keep local form state synchronized with
-      // exactly what the backend returned.
       setForm({
         title:
           updatedBook.title || '',

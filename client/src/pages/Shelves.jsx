@@ -19,9 +19,6 @@ export default function Shelves() {
   const [deletingShelf, setDeletingShelf] =
     useState(null);
 
-  // =========================================================
-  // LOAD SHELVES
-  // =========================================================
 
   async function loadShelves() {
     setLoading(true);
@@ -63,9 +60,6 @@ export default function Shelves() {
     loadShelves();
   }, []);
 
-  // =========================================================
-  // CREATE SHELF
-  // =========================================================
 
   async function handleCreateShelf(e) {
     e.preventDefault();
@@ -104,10 +98,6 @@ export default function Shelves() {
     }
   }
 
-  // =========================================================
-  // DELETE SHELF
-  // =========================================================
-
   async function handleDeleteShelf(shelf) {
     const confirmed = window.confirm(
       `Are you sure you want to delete "${shelf.name}"? This action cannot be undone.`
@@ -140,10 +130,6 @@ export default function Shelves() {
     }
   }
 
-  // =========================================================
-  // HELPERS
-  // =========================================================
-
   function getBookCount(shelf) {
     return Array.isArray(shelf.books)
       ? shelf.books.length
@@ -168,10 +154,6 @@ export default function Shelves() {
       'Another BookNest user'
     );
   }
-
-  // =========================================================
-  // SHELF CARD
-  // =========================================================
 
   function renderShelfCard(shelf, shared = false) {
     const bookCount = getBookCount(shelf);
@@ -297,16 +279,12 @@ export default function Shelves() {
     );
   }
 
-  // =========================================================
-  // RENDER
-  // =========================================================
+  
 
   return (
     <div className="shelves-page">
 
-      {/* =====================================================
-          HEADER
-          ===================================================== */}
+      
 
       <section className="shelves-header">
         <div>
@@ -338,9 +316,7 @@ export default function Shelves() {
         </button>
       </section>
 
-      {/* =====================================================
-          ERROR
-          ===================================================== */}
+
 
       {error && (
         <section className="card shelf-error">
@@ -350,9 +326,7 @@ export default function Shelves() {
         </section>
       )}
 
-      {/* =====================================================
-          CREATE SHELF
-          ===================================================== */}
+    
 
       {showCreateForm && (
         <section className="card create-shelf-card">
@@ -406,9 +380,6 @@ export default function Shelves() {
         </section>
       )}
 
-      {/* =====================================================
-          LOADING
-          ===================================================== */}
 
       {loading ? (
         <section className="card shelf-state">
@@ -418,9 +389,6 @@ export default function Shelves() {
         </section>
       ) : (
         <>
-          {/* =================================================
-              MY SHELVES
-              ================================================= */}
 
           <section>
             <div className="section-heading">
@@ -467,10 +435,6 @@ export default function Shelves() {
               </div>
             )}
           </section>
-
-          {/* =================================================
-              SHARED WITH ME
-              ================================================= */}
 
           <section>
             <div className="section-heading">

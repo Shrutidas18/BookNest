@@ -1,7 +1,3 @@
-/* =========================================
-   DASHBOARD HERO
-   ========================================= */
-
 .hero.dashboard-hero {
   display: flex;
   align-items: flex-end;
@@ -14,15 +10,12 @@
 
 .hero.dashboard-hero > div {
   max-width: 640px;
+  min-width: 0;
 }
 
 .hero.dashboard-hero p:last-child {
   margin-bottom: 0;
 }
-
-/* =========================================
-   STATS GRID
-   ========================================= */
 
 .stats-grid {
   display: grid;
@@ -36,6 +29,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 
   padding: 20px 22px;
 }
@@ -59,10 +53,6 @@
   color: var(--text-muted);
 }
 
-/* =========================================
-   MAIN DASHBOARD GRID (books + quick actions)
-   ========================================= */
-
 .dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -72,10 +62,9 @@
   margin-bottom: 20px;
 }
 
-/* =========================================
-   BOOK CARDS
-   (one card per book, in a responsive grid)
-   ========================================= */
+.dashboard-grid > * {
+  min-width: 0;
+}
 
 .book-list {
   display: grid;
@@ -86,6 +75,7 @@
 .book-item {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 
   padding: 18px 20px;
 
@@ -110,15 +100,21 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
+  min-width: 0;
+  width: 100%;
 }
 
 .book-info h3 {
   margin-bottom: 2px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .book-info p {
   margin: 0;
   font-size: 14px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Status pill */
@@ -184,10 +180,6 @@
   transition: width var(--transition-slow);
 }
 
-/* =========================================
-   QUICK ACTIONS
-   ========================================= */
-
 .quick-actions {
   display: flex;
   flex-direction: column;
@@ -236,10 +228,6 @@
   color: var(--text-muted);
 }
 
-/* =========================================
-   ACTIVITY FEED
-   ========================================= */
-
 .activity-list {
   display: flex;
   flex-direction: column;
@@ -250,6 +238,7 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  min-width: 0;
 }
 
 .activity-dot {
@@ -261,11 +250,16 @@
   background: var(--accent);
 }
 
+.activity-item > div {
+  min-width: 0;
+}
+
 .activity-item strong {
   display: block;
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
+  overflow-wrap: break-word;
 }
 
 .activity-item small {
@@ -275,30 +269,182 @@
   color: var(--text-muted);
 }
 
-/* =========================================
-   RESPONSIVE
-   ========================================= */
+:root {
+  --palette-blue: #c4dae8;
+  --palette-butter: #feefb8;
+  --palette-chocopie: #432f2e;
+}
+
+.stats-grid-primary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stat-card-primary strong {
+  font-size: 36px;
+}
+
+.stat-card-primary:nth-child(1) {
+  background: var(--palette-chocopie);
+}
+
+.stat-card-primary:nth-child(1) strong,
+.stat-card-primary:nth-child(1) .muted,
+.stat-card-primary:nth-child(1) small {
+  color: var(--palette-butter);
+}
+
+.stat-card-primary:nth-child(2) {
+  background: var(--palette-blue);
+}
+
+.stat-card-primary:nth-child(2) strong,
+.stat-card-primary:nth-child(2) .muted,
+.stat-card-primary:nth-child(2) small {
+  color: var(--palette-chocopie);
+}
+
+.stat-card-primary:nth-child(3) {
+  background: var(--palette-butter);
+}
+
+.stat-card-primary:nth-child(3) strong,
+.stat-card-primary:nth-child(3) .muted,
+.stat-card-primary:nth-child(3) small {
+  color: var(--palette-chocopie);
+}
+
+.stats-grid-secondary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-card-secondary strong {
+  font-size: 24px;
+}
+
+.pill-reading {
+  background: var(--palette-blue);
+  color: var(--palette-chocopie);
+}
+
+.pill-finished {
+  background: var(--palette-chocopie);
+  color: var(--palette-butter);
+}
+
+.pill-want_to_read {
+  background: var(--palette-butter);
+  color: var(--palette-chocopie);
+}
+
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
 
 @media (max-width: 900px) {
-  .stats-grid {
+  .stats-grid,
+  .stats-grid-primary,
+  .stats-grid-secondary {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
+
+  .book-list {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
 }
 
-@media (max-width: 520px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
+@media (max-width: 640px) {
   .hero.dashboard-hero {
     align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stats-grid,
+  .stats-grid-secondary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stats-grid-primary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
   .book-list {
     grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 14px 16px;
+    gap: 4px;
+  }
+
+  .stat-card .muted {
+    font-size: 11px;
+  }
+
+  .stat-card strong {
+    font-size: 22px;
+  }
+
+  .stat-card small {
+    font-size: 11px;
+  }
+
+  .stat-card-primary strong {
+    font-size: 24px;
+  }
+
+  .stat-card-secondary strong {
+    font-size: 18px;
+  }
+
+  .book-item {
+    padding: 16px 18px;
+  }
+
+  .action-button {
+    padding: 12px 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .stats-grid,
+  .stats-grid-primary,
+  .stats-grid-secondary {
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 12px 14px;
+  }
+
+  .stat-card strong {
+    font-size: 19px;
+  }
+
+  .stat-card-primary strong {
+    font-size: 20px;
+  }
+
+  .book-item {
+    padding: 14px 16px;
+  }
+
+  .pill {
+    font-size: 10px;
+    padding: 4px 10px;
   }
 }

@@ -134,6 +134,16 @@ export default function Dashboard() {
     navigate('/books');
   }
 
+  
+  function pillClassFor(status) {
+    const key = String(status).toLowerCase();
+    return `pill pill-${key}`;
+  }
+
+  function statusLabel(status) {
+    return String(status).replaceAll('_', ' ');
+  }
+
   return (
     <>
       {/* Hero */}
@@ -157,43 +167,36 @@ export default function Dashboard() {
         </button>
       </section>
 
-      {/* Statistics */}
-      <section className="stats-grid">
-        {/* Basic library statistics */}
-
-        <div className="card stat-card">
+      {/* Primary statistics — the numbers that matter most at a glance */}
+      <section className="stats-grid stats-grid-primary">
+        <div className="card stat-card stat-card-primary">
           <span className="muted">Total Books</span>
           <strong>{totalBooks}</strong>
           <small>In your library</small>
         </div>
 
-        <div className="card stat-card">
+        <div className="card stat-card stat-card-primary">
           <span className="muted">Currently Reading</span>
           <strong>{readingBooks}</strong>
           <small>Books in progress</small>
         </div>
 
-        <div className="card stat-card">
-          <span className="muted">Finished</span>
-          <strong>{finishedBooks}</strong>
-          <small>Books completed</small>
+        <div className="card stat-card stat-card-primary">
+          <span className="muted">Finished This Year</span>
+          <strong>{finishedThisYear}</strong>
+          <small>Of {finishedBooks} total finished</small>
         </div>
+      </section>
 
-        <div className="card stat-card">
+      {/* Secondary statistics — supporting detail, smaller footprint */}
+      <section className="stats-grid stats-grid-secondary">
+        <div className="card stat-card stat-card-secondary">
           <span className="muted">Want to Read</span>
           <strong>{wantToReadBooks}</strong>
           <small>On your reading list</small>
         </div>
 
-        {/* Required dashboard insights */}
-
-        <div className="card stat-card">
-          <span className="muted">Finished This Year</span>
-          <strong>{finishedThisYear}</strong>
-          <small>Completed this year</small>
-        </div>
-
-        <div className="card stat-card">
+        <div className="card stat-card stat-card-secondary">
           <span className="muted">Average Rating</span>
           <strong>
             {averageRating !== null
@@ -203,46 +206,16 @@ export default function Dashboard() {
           <small>Across rated books</small>
         </div>
 
-        <div className="card stat-card">
+        <div className="card stat-card stat-card-secondary">
           <span className="muted">Lent Out</span>
           <strong>{lentOutCount}</strong>
           <small>Currently with others</small>
         </div>
 
-        <div className="card stat-card">
+        <div className="card stat-card stat-card-secondary">
           <span className="muted">Shared Shelves</span>
           <strong>{sharedShelves}</strong>
           <small>Shared by you</small>
-        </div>
-      </section>
-
-      {/* Reading Insights */}
-      <section className="dashboard-grid">
-        {/* Top shelf */}
-        <div className="card">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">YOUR COLLECTION</p>
-              <h2>Top Shelf</h2>
-            </div>
-          </div>
-
-          {topShelf ? (
-            <div>
-              <h3>{topShelf.name}</h3>
-
-              <p className="muted">
-                {topShelf.bookCount}{' '}
-                {topShelf.bookCount === 1
-                  ? 'book'
-                  : 'books'}
-              </p>
-            </div>
-          ) : (
-            <p className="muted">
-              You haven't created any shelves yet.
-            </p>
-          )}
         </div>
       </section>
 
@@ -292,9 +265,8 @@ export default function Dashboard() {
                         <p>{book.author}</p>
                       </div>
 
-                      <span className="pill">
-                        {String(book.status)
-                          .replaceAll('_', ' ')}
+                      <span className={pillClassFor(book.status)}>
+                        {statusLabel(book.status)}
                       </span>
                     </div>
 
@@ -331,55 +303,83 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Quick actions */}
-        <div className="card">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">SHORTCUTS</p>
-              <h2>Quick Actions</h2>
+        {/* Sidebar: Quick actions + Top Shelf, stacked to fill the column */}
+        <div className="dashboard-sidebar">
+          <div className="card">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">SHORTCUTS</p>
+                <h2>Quick Actions</h2>
+              </div>
+            </div>
+
+            <div className="quick-actions">
+              <button
+                type="button"
+                className="action-button"
+                onClick={goToAddBook}
+              >
+                <strong>+ Add a book</strong>
+
+                <span>
+                  Add a new book to your library
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="action-button"
+                onClick={() => {
+                  alert(
+                    'Shelf creation is coming next.'
+                  );
+                }}
+              >
+                <strong>+ Create a shelf</strong>
+
+                <span>
+                  Organize books into a collection
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="action-button"
+                onClick={goToLibrary}
+              >
+                <strong>View my library</strong>
+
+                <span>
+                  Browse and manage all your books
+                </span>
+              </button>
             </div>
           </div>
 
-          <div className="quick-actions">
-            <button
-              type="button"
-              className="action-button"
-              onClick={goToAddBook}
-            >
-              <strong>+ Add a book</strong>
+          <div className="card">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">YOUR COLLECTION</p>
+                <h2>Top Shelf</h2>
+              </div>
+            </div>
 
-              <span>
-                Add a new book to your library
-              </span>
-            </button>
+            {topShelf ? (
+              <div>
+                <h3>{topShelf.name}</h3>
 
-            <button
-              type="button"
-              className="action-button"
-              onClick={() => {
-                alert(
-                  'Shelf creation is coming next.'
-                );
-              }}
-            >
-              <strong>+ Create a shelf</strong>
-
-              <span>
-                Organize books into a collection
-              </span>
-            </button>
-
-            <button
-              type="button"
-              className="action-button"
-              onClick={goToLibrary}
-            >
-              <strong>View my library</strong>
-
-              <span>
-                Browse and manage all your books
-              </span>
-            </button>
+                <p className="muted">
+                  {topShelf.bookCount}{' '}
+                  {topShelf.bookCount === 1
+                    ? 'book'
+                    : 'books'}
+                </p>
+              </div>
+            ) : (
+              <p className="muted">
+                You haven't created any shelves yet.
+              </p>
+            )}
           </div>
         </div>
       </section>

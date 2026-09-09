@@ -59,10 +59,6 @@ export default function ShelfDetails() {
   const [availableBooks, setAvailableBooks] =
     useState([]);
 
-  // =========================================================
-  // COLLABORATION STATE
-  // =========================================================
-
   const [collaboratorEmail, setCollaboratorEmail] =
     useState('');
 
@@ -77,9 +73,6 @@ export default function ShelfDetails() {
     setRemovingCollaboratorId,
   ] = useState(null);
 
-  // =========================================================
-  // LOAD SHELF
-  // =========================================================
 
   async function loadShelf(showLoading = true) {
     if (showLoading) {
@@ -117,10 +110,6 @@ export default function ShelfDetails() {
     }
   }
 
-  // =========================================================
-  // LOAD USER'S BOOKS
-  // =========================================================
-
   async function loadMyBooks() {
     setLoadingBooks(true);
 
@@ -148,18 +137,11 @@ export default function ShelfDetails() {
     }
   }
 
-  // =========================================================
-  // INITIAL LOAD
-  // =========================================================
 
   useEffect(() => {
     loadShelf();
     loadMyBooks();
   }, [id]);
-
-  // =========================================================
-  // REALTIME SHELF UPDATES
-  // =========================================================
 
   useEffect(() => {
     const socket = connectSocket();
@@ -319,10 +301,6 @@ export default function ShelfDetails() {
     };
   }, [id, currentUserId, navigate]);
 
-  // =========================================================
-  // SHELF HELPERS
-  // =========================================================
-
   const booksAlreadyOnShelf = useMemo(() => {
     return new Set(
       books.map(
@@ -358,10 +336,6 @@ export default function ShelfDetails() {
     currentCollaborator?.role === 'EDITOR';
 
   const canManageBooks = isEditor;
-
-  // =========================================================
-  // ADD BOOK
-  // =========================================================
 
   async function handleAddBook(e) {
     e.preventDefault();
@@ -408,10 +382,6 @@ export default function ShelfDetails() {
       setAddingBook(false);
     }
   }
-
-  // =========================================================
-  // REMOVE BOOK
-  // =========================================================
 
   async function handleRemoveBook(shelfBook) {
     if (!canManageBooks) {
@@ -462,10 +432,6 @@ export default function ShelfDetails() {
       setRemovingBookId(null);
     }
   }
-
-  // =========================================================
-  // SHARE SHELF
-  // =========================================================
 
   async function handleShareShelf(e) {
     e.preventDefault();
@@ -560,10 +526,6 @@ export default function ShelfDetails() {
     }
   }
 
-  // =========================================================
-  // REMOVE COLLABORATOR
-  // =========================================================
-
   async function handleRemoveCollaborator(
     collaborator
   ) {
@@ -617,10 +579,6 @@ export default function ShelfDetails() {
     }
   }
 
-  // =========================================================
-  // LOADING
-  // =========================================================
-
   if (loading) {
     return (
       <div className="shelf-details-page">
@@ -632,10 +590,6 @@ export default function ShelfDetails() {
       </div>
     );
   }
-
-  // =========================================================
-  // NOT FOUND / ERROR
-  // =========================================================
 
   if (!shelf) {
     return (
@@ -663,16 +617,9 @@ export default function ShelfDetails() {
     );
   }
 
-  // =========================================================
-  // PAGE
-  // =========================================================
-
   return (
     <div className="shelf-details-page">
 
-      {/* =====================================================
-          HEADER
-          ===================================================== */}
 
       <section className="shelf-details-header">
         <div>
@@ -708,10 +655,6 @@ export default function ShelfDetails() {
         </div>
       </section>
 
-      {/* =====================================================
-          ERROR
-          ===================================================== */}
-
       {error && (
         <section className="card shelf-error">
           <p className="error">
@@ -719,10 +662,6 @@ export default function ShelfDetails() {
           </p>
         </section>
       )}
-
-      {/* =====================================================
-          ADD BOOK
-          ===================================================== */}
 
       {canManageBooks && (
         <section className="card add-book-shelf-card">
@@ -803,10 +742,6 @@ export default function ShelfDetails() {
           )}
         </section>
       )}
-
-      {/* =====================================================
-          BOOKS
-          ===================================================== */}
 
       <section>
         <div className="section-heading shelf-books-heading">
@@ -912,10 +847,6 @@ export default function ShelfDetails() {
           </div>
         )}
       </section>
-
-      {/* =====================================================
-          COLLABORATORS
-          ===================================================== */}
 
       <section className="card collaborators-card">
         <div className="section-heading">
