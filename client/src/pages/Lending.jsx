@@ -28,6 +28,9 @@ export default function Lending() {
 
   const [lending, setLending] = useState(false);
   const [returningId, setReturningId] = useState(null);
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [selectedLendingRecord, setSelectedLendingRecord] =
+    useState(null);
 
   async function loadLendingData(showLoading = true) {
     if (showLoading) {
@@ -203,18 +206,6 @@ export default function Lending() {
   async function handleReturnBook(
     lendingRecord
   ) {
-    const title =
-      lendingRecord.book?.title ||
-      'this book';
-
-    const confirmed = window.confirm(
-      `Mark "${title}" as returned?`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     setReturningId(lendingRecord.id);
     setError('');
 
@@ -236,7 +227,23 @@ export default function Lending() {
       );
     } finally {
       setReturningId(null);
+      setShowReturnModal(false);
+      setSelectedLendingRecord(null);
     }
+  }
+
+  function openReturnModal(lendingRecord) {
+    setSelectedLendingRecord(lendingRecord);
+    setShowReturnModal(true);
+  }
+
+  function closeReturnModal() {
+    if (returningId) {
+      return;
+    }
+
+    setShowReturnModal(false);
+    setSelectedLendingRecord(null);
   }
 
   if (loading) {
@@ -454,7 +461,7 @@ export default function Lending() {
                       type="button"
                       className="secondary-button"
                       onClick={() =>
-                        handleReturnBook(
+                        openReturnModal(
                           lendingRecord
                         )
                       }
@@ -566,6 +573,63 @@ export default function Lending() {
       >
         ← Back to Library
       </button>
+
+      {/* RETURN CONFIRMATION MODAL */}
+      {showReturnModal && (
+        <div className="delete-modal-overlay">
+          <div
+            className="delete-modal card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="return-modal-title"
+          >
+            <h2 id="return-modal-title">
+              Mark this book as returned?
+            </h2>
+
+            <p className="muted">
+              Are you sure you want to mark{' '}
+              <strong>
+                {selectedLendingRecord?.book?.title ||
+                  'this book'}
+              </strong>{' '}
+              as returned?
+            </p>
+
+            <div className="delete-modal-actions">
+
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={closeReturnModal}
+                disabled={Boolean(returningId)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="danger-button"
+                onClick={() =>
+                  handleReturnBook(
+                    selectedLendingRecord
+                  )
+                }
+                disabled={
+                  Boolean(returningId) ||
+                  !selectedLendingRecord
+                }
+              >
+                {returningId
+                  ? 'Returning…'
+                  : 'Mark Returned'}
+              </button>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
