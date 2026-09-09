@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
@@ -120,6 +119,11 @@ export default function Dashboard() {
     readingBooks,
     finishedBooks,
     wantToReadBooks,
+    finishedThisYear,
+    averageRating,
+    lentOutCount,
+    sharedShelves,
+    topShelf,
   } = dashboard.stats;
 
   function goToAddBook() {
@@ -137,7 +141,7 @@ export default function Dashboard() {
         <div>
           <p className="eyebrow">YOUR READING SPACE</p>
 
-          <h1>Welcome back, Alice 👋</h1>
+          <h1>Welcome back 👋</h1>
 
           <p>
             Keep track of your books, reading progress,
@@ -155,6 +159,8 @@ export default function Dashboard() {
 
       {/* Statistics */}
       <section className="stats-grid">
+        {/* Basic library statistics */}
+
         <div className="card stat-card">
           <span className="muted">Total Books</span>
           <strong>{totalBooks}</strong>
@@ -177,6 +183,66 @@ export default function Dashboard() {
           <span className="muted">Want to Read</span>
           <strong>{wantToReadBooks}</strong>
           <small>On your reading list</small>
+        </div>
+
+        {/* Required dashboard insights */}
+
+        <div className="card stat-card">
+          <span className="muted">Finished This Year</span>
+          <strong>{finishedThisYear}</strong>
+          <small>Completed this year</small>
+        </div>
+
+        <div className="card stat-card">
+          <span className="muted">Average Rating</span>
+          <strong>
+            {averageRating !== null
+              ? `${averageRating} / 5`
+              : '—'}
+          </strong>
+          <small>Across rated books</small>
+        </div>
+
+        <div className="card stat-card">
+          <span className="muted">Lent Out</span>
+          <strong>{lentOutCount}</strong>
+          <small>Currently with others</small>
+        </div>
+
+        <div className="card stat-card">
+          <span className="muted">Shared Shelves</span>
+          <strong>{sharedShelves}</strong>
+          <small>Shared by you</small>
+        </div>
+      </section>
+
+      {/* Reading Insights */}
+      <section className="dashboard-grid">
+        {/* Top shelf */}
+        <div className="card">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">YOUR COLLECTION</p>
+              <h2>Top Shelf</h2>
+            </div>
+          </div>
+
+          {topShelf ? (
+            <div>
+              <h3>{topShelf.name}</h3>
+
+              <p className="muted">
+                {topShelf.bookCount}{' '}
+                {topShelf.bookCount === 1
+                  ? 'book'
+                  : 'books'}
+              </p>
+            </div>
+          ) : (
+            <p className="muted">
+              You haven't created any shelves yet.
+            </p>
+          )}
         </div>
       </section>
 
@@ -281,6 +347,7 @@ export default function Dashboard() {
               onClick={goToAddBook}
             >
               <strong>+ Add a book</strong>
+
               <span>
                 Add a new book to your library
               </span>
@@ -296,6 +363,7 @@ export default function Dashboard() {
               }}
             >
               <strong>+ Create a shelf</strong>
+
               <span>
                 Organize books into a collection
               </span>
@@ -307,6 +375,7 @@ export default function Dashboard() {
               onClick={goToLibrary}
             >
               <strong>View my library</strong>
+
               <span>
                 Browse and manage all your books
               </span>
@@ -322,6 +391,7 @@ export default function Dashboard() {
             <p className="eyebrow">
               WHAT'S HAPPENING
             </p>
+
             <h2>Recent Activity</h2>
           </div>
         </div>
@@ -356,4 +426,3 @@ export default function Dashboard() {
     </>
   );
 }
-
