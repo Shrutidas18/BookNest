@@ -5,6 +5,7 @@ import {
   Route,
   Routes,
   useNavigate,
+  useLocation,
 } from 'react-router-dom';
 
 import Login from './pages/Login';
@@ -17,6 +18,7 @@ import BookDetails from './pages/BookDetails';
 import Shelves from './pages/Shelves';
 import ShelfDetails from './pages/ShelfDetails';
 import Lending from './pages/Lending';
+import Landing from './pages/Landing';
 
 import api, { setAccessToken } from './services/api';
 import {
@@ -45,9 +47,6 @@ function Navigation() {
     localStorage.getItem('booknest_access_token')
   );
 
-  /*
-   * Close the mobile menu when the user scrolls.
-   */
   useEffect(() => {
     function handleScroll() {
       setIsMenuOpen(false);
@@ -89,17 +88,17 @@ function Navigation() {
   return (
     <nav className="nav">
       <Link
-  to="/"
-  className="brand"
-  onClick={handleNavigation}
->
-  <img
-    src="/logo.jpg"
-    alt="BookNest"
-    className="navbar-logo"
-  />
-  <span>BookNest</span>
-</Link>
+        to="/"
+        className="brand"
+        onClick={handleNavigation}
+      >
+        <img
+          src="/logo.jpg"
+          alt="BookNest"
+          className="navbar-logo"
+        />
+        <span>BookNest</span>
+      </Link>
 
       {/* Hamburger button */}
       <button
@@ -129,38 +128,23 @@ function Navigation() {
       >
         {isAuthenticated ? (
           <>
-            <Link
-              to="/"
-              onClick={handleNavigation}
-            >
+            <Link to="/" onClick={handleNavigation}>
               Dashboard
             </Link>
 
-            <Link
-              to="/books"
-              onClick={handleNavigation}
-            >
+            <Link to="/books" onClick={handleNavigation}>
               My Library
             </Link>
 
-            <Link
-              to="/shelves"
-              onClick={handleNavigation}
-            >
+            <Link to="/shelves" onClick={handleNavigation}>
               Shelves
             </Link>
 
-            <Link
-              to="/lending"
-              onClick={handleNavigation}
-            >
+            <Link to="/lending" onClick={handleNavigation}>
               Lending
             </Link>
 
-            <Link
-              to="/books/add"
-              onClick={handleNavigation}
-            >
+            <Link to="/books/add" onClick={handleNavigation}>
               Add Book
             </Link>
 
@@ -174,17 +158,11 @@ function Navigation() {
           </>
         ) : (
           <>
-            <Link
-              to="/login"
-              onClick={handleNavigation}
-            >
+            <Link to="/login" onClick={handleNavigation}>
               Login
             </Link>
 
-            <Link
-              to="/signup"
-              onClick={handleNavigation}
-            >
+            <Link to="/signup" onClick={handleNavigation}>
               Sign up
             </Link>
           </>
@@ -195,6 +173,15 @@ function Navigation() {
 }
 
 export default function App() {
+  const location = useLocation();
+
+  const isAuthenticated = Boolean(
+    localStorage.getItem('booknest_access_token')
+  );
+
+  // Hide the nav bar on the guest landing page only.
+  const hideNav = location.pathname === '/' && !isAuthenticated;
+
   useEffect(() => {
     const token = localStorage.getItem(
       'booknest_access_token'
@@ -213,17 +200,21 @@ export default function App() {
 
   return (
     <div className="app">
-      <Navigation />
+      {!hideNav && <Navigation />}
 
-      <main className="container">
+      <main className={hideNav ? '' : 'container'}>
         <Routes>
-          {/* Dashboard */}
+          {/* Root: landing page for guests, Dashboard for logged-in users */}
           <Route
             path="/"
             element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
+              isAuthenticated ? (
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              ) : (
+                <Landing />
+              )
             }
           />
 
@@ -298,21 +289,11 @@ export default function App() {
           />
 
           {/* Authentication */}
-          <Route
-            path="/login"
-            element={<Login />}
-          />
-
-          <Route
-            path="/signup"
-            element={<Signup />}
-          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
           {/* Unknown routes */}
-          <Route
-            path="*"
-            element={<Navigate to="/" replace />}
-          />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>

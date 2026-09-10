@@ -1,0 +1,359 @@
+.landing-page {
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  display: flex;
+  background: #f7f3ed;
+  color: #24211f;
+  overflow: hidden;
+}
+
+.landing-image-section {
+  order: 2;
+  width: 40%;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(20, 18, 16, 0.05) 0%,
+      rgba(20, 18, 16, 0.15) 55%,
+      rgba(20, 18, 16, 0.7) 100%
+    ),
+    url("/landing2.jpg");
+  background-size: cover;
+  background-position: 65% center;
+}
+
+.image-overlay {
+  position: absolute;
+  left: 40px;
+  bottom: 45px;
+  color: #f7f3ed;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.landing-content {
+  order: 1;
+  width: 60%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 60px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.landing-inner {
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+}
+
+.brand-mark {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: lowercase;
+  margin-bottom: 28px;
+  color: #6b2a22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.brand-mark::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #b08a3e;
+  display: inline-block;
+}
+
+.book-visual {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 26px;
+}
+
+.book-cover {
+  width: 145px;
+  height: 205px;
+  padding: 25px 20px;
+  box-sizing: border-box;
+  background: linear-gradient(155deg, #46362c 0%, #2a1f18 100%);
+  color: #f7f3ed;
+  box-shadow:
+    0 22px 30px rgba(50, 40, 32, 0.28),
+    0 4px 8px rgba(50, 40, 32, 0.2);
+  transform: rotate(-3deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.book-cover::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.book-line {
+  width: 35px;
+  height: 2px;
+  background: #b08a3e;
+  margin: 0 auto 20px;
+}
+
+.book-cover h2 {
+  font-family: Georgia, serif;
+  font-size: 25px;
+  line-height: 1.05;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.book-cover p {
+  font-size: 8px;
+  letter-spacing: 1px;
+  margin-top: 20px;
+  color: #d9cfc5;
+}
+
+.landing-inner h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 4vw, 58px);
+  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: -1.5px;
+  margin: 0 0 18px;
+}
+
+.landing-description {
+  max-width: 470px;
+  margin: 0 auto 26px;
+  color: #716961;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+blockquote {
+  position: relative;
+  margin: 0 auto 28px;
+  max-width: 430px;
+  padding-top: 14px;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  line-height: 1.6;
+  font-style: italic;
+  color: #6b2a22;
+}
+
+blockquote::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 2px;
+  background: #b08a3e;
+}
+
+blockquote span {
+  display: block;
+  margin-top: 7px;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 1px;
+  color: #8a8179;
+}
+
+.landing-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.landing-btn {
+  min-width: 135px;
+  padding: 13px 25px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.landing-btn.primary {
+  border: 1px solid #3d3029;
+  background: #3d3029;
+  color: white;
+}
+
+.landing-btn.primary:hover {
+  background: #6b2a22;
+  border-color: #6b2a22;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(107, 42, 34, 0.28);
+}
+
+.landing-btn.secondary {
+  border: 1px solid #c8beb5;
+  background: transparent;
+  color: #3d3029;
+}
+
+.landing-btn.secondary:hover {
+  background: transparent;
+  border-color: #6b2a22;
+  color: #6b2a22;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(50, 40, 32, 0.12);
+}
+
+.landing-footer-text {
+  margin-top: 26px;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: #9a9189;
+}
+
+/* Tablet / narrow: stack image on top, content below */
+@media (max-width: 900px) {
+  .landing-page {
+    height: 100dvh;
+    min-height: 100dvh;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .landing-image-section {
+    order: 2;
+    width: 100%;
+    height: 26%;
+    min-height: 0;
+    background-position: center;
+  }
+
+  .landing-content {
+    order: 1;
+    width: 100%;
+    height: 74%;
+    min-height: 0;
+    padding: 20px 22px;
+    overflow-y: auto;
+  }
+
+  .image-overlay {
+    left: 20px;
+    bottom: 16px;
+    font-size: 14px;
+  }
+
+  .brand-mark {
+    margin-bottom: 14px;
+  }
+
+  .book-visual {
+    margin-bottom: 14px;
+  }
+
+  .book-cover {
+    width: 90px;
+    height: 128px;
+    padding: 16px 12px;
+  }
+
+  .book-cover h2 {
+    font-size: 16px;
+  }
+
+  .book-cover p {
+    font-size: 6px;
+    margin-top: 10px;
+  }
+
+  .landing-inner h1 {
+    font-size: clamp(26px, 6vw, 38px);
+    margin-bottom: 10px;
+  }
+
+  .landing-description {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  blockquote {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 16px;
+    padding-top: 8px;
+  }
+
+  .landing-actions {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .landing-btn {
+    min-width: 0;
+    flex: 1;
+    padding: 12px 16px;
+  }
+
+  .landing-footer-text {
+    margin-top: 10px;
+    font-size: 9px;
+  }
+}
+
+/* Very short viewports: drop the quote entirely, it's decorative */
+@media (max-width: 900px) and (max-height: 720px) {
+  blockquote {
+    display: none;
+  }
+}
+
+/* Narrow phones */
+@media (max-width: 500px) {
+  .landing-image-section {
+    height: 22%;
+  }
+
+  .landing-content {
+    height: 78%;
+    padding: 18px 18px;
+  }
+
+  .book-cover {
+    width: 75px;
+    height: 106px;
+    padding: 12px 10px;
+  }
+
+  .book-cover h2 {
+    font-size: 14px;
+  }
+
+  .landing-inner h1 {
+    font-size: clamp(22px, 7vw, 30px);
+  }
+}

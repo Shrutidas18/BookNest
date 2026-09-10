@@ -50,12 +50,78 @@ a {
 }
 
 .card {
+  position: relative;
+
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xs);
 
   padding: 24px;
+
+  animation: cardIn 0.4s ease both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.back-link {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 2;
+
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+
+  transition: background var(--transition), color var(--transition);
+}
+
+.back-link:hover {
+  background: var(--bg);
+  color: var(--primary);
+}
+
+.form-card {
+  border-top: 4px solid var(--secondary);
+}
+
+.form-card .form-header {
+  margin-top: 0;
+  padding-top: 48px;
+}
+
+.form-card .form-header .back-link {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+
+  width: auto;
+  height: auto;
+
+  padding: 6px 10px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  border-radius: var(--radius-sm);
+
+  justify-content: flex-start;
+}
+
+.form-card .form-header .back-link:hover {
+  background: var(--bg);
+  color: var(--primary);
 }
 
 h1,
@@ -132,7 +198,7 @@ button:hover:not(:disabled) {
 }
 
 button:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
 }
 
 button:disabled {
@@ -176,15 +242,37 @@ textarea:hover {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--primary);
+  border-color: var(--secondary);
 
   box-shadow:
-    0 0 0 3px rgba(49, 92, 76, 0.1);
+    0 0 0 3px var(--secondary-light);
+
+  transform: translateY(-1px);
+}
+
+.form-card form > label:focus-within {
+  color: var(--secondary);
 }
 
 textarea {
   resize: vertical;
   min-height: 120px;
+}
+
+.form-card form > label,
+.form-card form > .form-row {
+  animation: fieldIn 0.35s ease both;
+}
+.form-card form > label:nth-child(1) { animation-delay: 0.03s; }
+.form-card form > label:nth-child(2) { animation-delay: 0.08s; }
+.form-card form > label:nth-child(3) { animation-delay: 0.13s; }
+.form-card form > .form-row          { animation-delay: 0.18s; }
+.form-card form > label:nth-child(5) { animation-delay: 0.26s; }
+.form-card form > label:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes fieldIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .error {
@@ -199,6 +287,15 @@ textarea {
   color: var(--danger);
 
   font-size: 14px;
+
+  animation: errorShake 0.4s ease;
+}
+
+@keyframes errorShake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
 }
 
 .success {
@@ -252,8 +349,18 @@ textarea {
     font-size: 21px;
   }
 
-  .card {
+    .card {
     padding: 18px;
+  }
+
+  .form-card .form-header {
+    padding-top: 44px;
+  }
+
+  .form-card .form-header .back-link {
+    top: 14px;
+    left: 14px;
+    font-size: 13px;
   }
 
   .section-heading {

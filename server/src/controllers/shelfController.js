@@ -5,6 +5,7 @@ const {
   emitToUsers,
   emitToUser,
   emitToShelf,
+  removeUserFromShelf,
 } = require('../socket');
 
 async function createShelf(req, res) {
@@ -420,6 +421,10 @@ async function removeCollaborator(req, res) {
       id: share.id,
     },
   });
+  removeUserFromShelf(
+  share.userId,
+  req.params.id
+);
 
   const activity =
     await prisma.activityLog.create({

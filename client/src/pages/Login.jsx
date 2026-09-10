@@ -52,6 +52,10 @@ export default function Login() {
 
   return (
     <section className="card form-card">
+      <Link to="/" className="back-link" aria-label="Back to home">
+        ←
+      </Link>
+
       <div className="form-header">
         <p className="eyebrow">WELCOME BACK</p>
 

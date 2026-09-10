@@ -182,6 +182,24 @@ function emitToUsersAndShelf(
   emitToShelf(shelfId, event, payload);
 }
 
+// Remove all active sockets belonging to a user
+// from a shelf's realtime room.
+//
+// This is used when an owner removes a collaborator
+// so that the collaborator no longer receives
+// realtime events from that shelf.
+function removeUserFromShelf(userId, shelfId) {
+  const io = getIO();
+
+  const sockets = io.sockets.sockets;
+
+  for (const socket of sockets.values()) {
+    if (socket.userId === userId) {
+      socket.leave(`shelf:${shelfId}`);
+    }
+  }
+}
+
 module.exports = {
   setupSocket,
   getIO,
@@ -189,4 +207,5 @@ module.exports = {
   emitToUsers,
   emitToShelf,
   emitToUsersAndShelf,
+  removeUserFromShelf,
 };

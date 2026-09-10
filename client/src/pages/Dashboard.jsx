@@ -329,11 +329,7 @@ export default function Dashboard() {
               <button
                 type="button"
                 className="action-button"
-                onClick={() => {
-                  alert(
-                    'Shelf creation is coming next.'
-                  );
-                }}
+                onClick={() => navigate('/shelves')}
               >
                 <strong>+ Create a shelf</strong>
 

@@ -12,7 +12,6 @@ export default function Signup() {
   });
 
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
@@ -26,30 +25,17 @@ export default function Signup() {
     e.preventDefault();
 
     setError('');
-    setSuccess('');
     setLoading(true);
 
     try {
-      const { data } = await api.post('/auth/signup', form);
+      const response = await api.post('/auth/signup', form);
 
-      console.log('SIGNUP SUCCESS:', data);
+      console.log('Signup successful:', response.data);
 
-      setSuccess('Account created successfully! Redirecting to login...');
-
-      // Clear the form
-      setForm({
-        name: '',
-        email: '',
-        password: '',
-      });
-
-      // Give the user a moment to see the success message,
-      // then force navigation to the login page.
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1200);
+      // Signup succeeded → go directly to login
+      navigate('/login', { replace: true });
     } catch (err) {
-      console.error('SIGNUP ERROR:', err);
+      console.error('Signup error:', err);
 
       setError(
         err.response?.data?.message ||
@@ -62,6 +48,10 @@ export default function Signup() {
 
   return (
     <section className="card form-card">
+      <Link to="/" className="back-link" aria-label="Back to home">
+        ←
+      </Link>
+
       <div className="form-header">
         <p className="eyebrow">GET STARTED</p>
 
@@ -122,19 +112,9 @@ export default function Signup() {
           and one number.
         </p>
 
-        {error && (
-          <p className="error">
-            {error}
-          </p>
-        )}
+        {error && <p className="error">{error}</p>}
 
-        {success && (
-          <p className="success">
-            {success}
-          </p>
-        )}
-
-        <button type="submit" disabled={loading || Boolean(success)}>
+        <button type="submit" disabled={loading}>
           {loading ? 'Creating account…' : 'Create account'}
         </button>
       </form>

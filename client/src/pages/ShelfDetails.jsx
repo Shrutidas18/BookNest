@@ -9,7 +9,10 @@ import {
   useParams,
 } from 'react-router-dom';
 import api from '../services/api';
-import { connectSocket, joinShelf } from '../services/socket';
+import {
+  connectSocket,
+  joinShelf,
+} from '../services/socket';
 
 function getCurrentUserId() {
   try {
@@ -73,6 +76,8 @@ export default function ShelfDetails() {
     setRemovingCollaboratorId,
   ] = useState(null);
 
+  const [confirmModal, setConfirmModal] =
+    useState(null);
 
   async function loadShelf(showLoading = true) {
     if (showLoading) {
@@ -137,12 +142,21 @@ export default function ShelfDetails() {
     }
   }
 
-
   useEffect(() => {
     loadShelf();
     loadMyBooks();
   }, [id]);
 
+  /*
+   * REALTIME SHELF UPDATES
+   *
+   * The shelf room is joined:
+   * 1. Immediately if the socket is already connected.
+   * 2. Whenever the socket connects/reconnects.
+   *
+   * This prevents joinShelf(id) from silently failing
+   * when the socket is still connecting.
+   */
   useEffect(() => {
     const socket = connectSocket();
 
@@ -150,8 +164,22 @@ export default function ShelfDetails() {
       return undefined;
     }
 
-    // Explicitly join this shelf's realtime room.
-    joinShelf(id);
+    function handleConnect() {
+      console.log(
+        'Socket connected/reconnected — joining shelf:',
+        id
+      );
+
+      joinShelf(id);
+    }
+
+    // Join immediately if already connected.
+    if (socket.connected) {
+      joinShelf(id);
+    }
+
+    // Join whenever the socket connects or reconnects.
+    socket.on('connect', handleConnect);
 
     function handleBookAdded(payload) {
       if (payload?.shelfId !== id) {
@@ -210,17 +238,6 @@ export default function ShelfDetails() {
         'Realtime collaborator removal — refreshing shelf.'
       );
 
-      // If the current user was removed, the REST
-      // request will return 403 and the page will
-      // show the appropriate error state.
-      if (
-        payload?.collaboratorId ===
-        currentUserId
-      ) {
-        loadShelf(false);
-        return;
-      }
-
       loadShelf(false);
     }
 
@@ -269,6 +286,12 @@ export default function ShelfDetails() {
     );
 
     return () => {
+      // Remove the connection listener.
+      socket.off(
+        'connect',
+        handleConnect
+      );
+
       socket.off(
         'shelf:book-added',
         handleBookAdded
@@ -383,23 +406,7 @@ export default function ShelfDetails() {
     }
   }
 
-  async function handleRemoveBook(shelfBook) {
-    if (!canManageBooks) {
-      return;
-    }
-
-    const bookTitle =
-      shelfBook.book?.title ||
-      'this book';
-
-    const confirmed = window.confirm(
-      `Remove "${bookTitle}" from this shelf?`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
+  async function performRemoveBook(shelfBook) {
     setRemovingBookId(
       shelfBook.bookId
     );
@@ -526,22 +533,9 @@ export default function ShelfDetails() {
     }
   }
 
-  async function handleRemoveCollaborator(
+  async function performRemoveCollaborator(
     collaborator
   ) {
-    const collaboratorName =
-      collaborator.user?.name ||
-      collaborator.user?.email ||
-      'this collaborator';
-
-    const confirmed = window.confirm(
-      `Remove ${collaboratorName} from this shelf?`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     setRemovingCollaboratorId(
       collaborator.id
     );
@@ -577,6 +571,60 @@ export default function ShelfDetails() {
     } finally {
       setRemovingCollaboratorId(null);
     }
+  }
+
+  function requestRemoveBook(shelfBook) {
+    if (!canManageBooks) {
+      return;
+    }
+
+    setConfirmModal({
+      type: 'book',
+      data: shelfBook,
+      title: 'Remove book from shelf',
+      message: `Remove "${
+        shelfBook.book?.title || 'this book'
+      }" from this shelf?`,
+    });
+  }
+
+  function requestRemoveCollaborator(
+    collaborator
+  ) {
+    setConfirmModal({
+      type: 'collaborator',
+      data: collaborator,
+      title: 'Remove collaborator',
+      message: `Remove ${
+        collaborator.user?.name ||
+        collaborator.user?.email ||
+        'this collaborator'
+      } from this shelf?`,
+    });
+  }
+
+  function closeConfirmModal() {
+    setConfirmModal(null);
+  }
+
+  async function handleConfirmModal() {
+    if (!confirmModal) {
+      return;
+    }
+
+    if (confirmModal.type === 'book') {
+      await performRemoveBook(
+        confirmModal.data
+      );
+    } else if (
+      confirmModal.type === 'collaborator'
+    ) {
+      await performRemoveCollaborator(
+        confirmModal.data
+      );
+    }
+
+    setConfirmModal(null);
   }
 
   if (loading) {
@@ -619,8 +667,6 @@ export default function ShelfDetails() {
 
   return (
     <div className="shelf-details-page">
-
-
       <section className="shelf-details-header">
         <div>
           <Link
@@ -681,7 +727,8 @@ export default function ShelfDetails() {
             <p className="muted">
               Loading your books…
             </p>
-          ) : booksAvailableToAdd.length === 0 ? (
+          ) : booksAvailableToAdd.length ===
+            0 ? (
             <div className="empty-shelf-preview">
               <span>
                 All of your books are already on
@@ -806,8 +853,6 @@ export default function ShelfDetails() {
                   ) : null}
                 </div>
 
-                {/* READ-ONLY BOOK DETAILS */}
-
                 <button
                   type="button"
                   className="secondary-button"
@@ -820,14 +865,12 @@ export default function ShelfDetails() {
                   View Book
                 </button>
 
-                {/* ONLY OWNER / EDITOR CAN REMOVE */}
-
                 {canManageBooks && (
                   <button
                     type="button"
                     className="danger-button"
                     onClick={() =>
-                      handleRemoveBook(
+                      requestRemoveBook(
                         shelfBook
                       )
                     }
@@ -1000,7 +1043,7 @@ export default function ShelfDetails() {
                           type="button"
                           className="remove-collaborator-button"
                           onClick={() =>
-                            handleRemoveCollaborator(
+                            requestRemoveCollaborator(
                               collaborator
                             )
                           }
@@ -1042,6 +1085,38 @@ export default function ShelfDetails() {
           </div>
         )}
       </section>
+
+      {confirmModal && (
+        <div className="delete-modal-overlay">
+          <div className="card delete-modal">
+            <h2>
+              {confirmModal.title}
+            </h2>
+
+            <p>
+              {confirmModal.message}
+            </p>
+
+            <div className="delete-modal-actions">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={closeConfirmModal}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="danger-button"
+                onClick={handleConfirmModal}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

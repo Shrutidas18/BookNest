@@ -1,4 +1,3 @@
-
 .lending-page {
   display: flex;
   flex-direction: column;
@@ -14,10 +13,23 @@
   justify-content: space-between;
   gap: 24px;
   padding: clamp(22px, 4vw, 30px);
+
   border-radius: 20px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
+
+  background: color-mix(
+    in srgb,
+    var(--palette-butter) 34%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-butter) 70%,
+    var(--border)
+  );
+
   box-shadow: var(--shadow);
+
   overflow: hidden;
 }
 
@@ -26,18 +38,32 @@
   font-size: clamp(25px, 4vw, 32px);
   line-height: 1.2;
   letter-spacing: -0.02em;
+  color: var(--palette-chocopie);
 }
 
 .lending-header-icon {
   width: 64px;
   height: 64px;
   flex: 0 0 64px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   border-radius: 18px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+
+  background: color-mix(
+    in srgb,
+    var(--palette-pink) 30%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-pink) 55%,
+    var(--border)
+  );
+
   font-size: 30px;
 }
 
@@ -66,6 +92,20 @@
 .lend-book-card {
   padding: clamp(20px, 4vw, 28px);
   overflow: hidden;
+
+  background: color-mix(
+    in srgb,
+    var(--palette-chocopie) 5%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-chocopie) 18%,
+    var(--border)
+  );
+
+  border-radius: var(--radius-md);
 }
 
 .lend-book-form {
@@ -94,12 +134,16 @@
   width: 100%;
   min-height: 46px;
   padding: 0 13px;
+
   border: 1px solid var(--border);
   border-radius: 11px;
+
   background: var(--input-bg, var(--surface));
   color: var(--text);
+
   font: inherit;
   outline: none;
+
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -113,26 +157,37 @@
 
 .form-group input:hover,
 .form-group select:hover {
-  border-color: color-mix(in srgb, var(--border) 65%, var(--text));
+  border-color: color-mix(
+    in srgb,
+    var(--border) 65%,
+    var(--text)
+  );
 }
 
 .form-group input:focus,
 .form-group select:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-soft);
+
+  box-shadow:
+    0 0 0 3px var(--primary-soft);
 }
 
 .lend-book-form > button {
   min-height: 46px;
   padding: 0 22px;
+
   border: none;
   border-radius: 11px;
-  background: var(--primary);
-  color: white;
+
+  background: var(--palette-chocopie);
+  color: var(--palette-butter);
+
   font: inherit;
   font-weight: 600;
+
   white-space: nowrap;
   cursor: pointer;
+
   transition:
     transform 0.15s ease,
     opacity 0.15s ease,
@@ -141,7 +196,9 @@
 
 .lend-book-form > button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: var(--shadow);
+
+  box-shadow:
+    0 5px 14px rgba(67, 47, 46, 0.16);
 }
 
 .lend-book-form > button:active:not(:disabled) {
@@ -160,32 +217,85 @@
 }
 
 .lending-item {
+  position: relative;
+
   display: flex;
   align-items: center;
   gap: 16px;
+
   min-width: 0;
   padding: 20px;
+
   border-radius: 16px;
+
+  border: 1px solid var(--border);
+
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
     border-color 0.18s ease;
 }
 
+.lending-item:nth-child(3n + 1) {
+  background: color-mix(
+    in srgb,
+    var(--palette-chocopie) 6%,
+    var(--surface)
+  );
+
+  border-left: 5px solid var(--palette-chocopie);
+}
+
+.lending-item:nth-child(3n + 2) {
+  background: color-mix(
+    in srgb,
+    var(--palette-blue) 24%,
+    var(--surface)
+  );
+
+  border-left: 5px solid var(--palette-blue);
+}
+
+.lending-item:nth-child(3n + 3) {
+  background: color-mix(
+    in srgb,
+    var(--palette-butter) 40%,
+    var(--surface)
+  );
+
+  border-left: 5px solid var(--palette-butter);
+}
+
 .lending-item:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 5px 14px rgba(67, 47, 46, 0.08);
 }
 
 .lending-book-icon {
   width: 48px;
   height: 48px;
   flex: 0 0 48px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   border-radius: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+
+  background: color-mix(
+    in srgb,
+    var(--palette-pink) 22%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-pink) 45%,
+    var(--border)
+  );
+
   font-size: 22px;
 }
 
@@ -196,8 +306,10 @@
 
 .lending-book-info h3 {
   margin: 0 0 4px;
+
   font-size: 16px;
   line-height: 1.35;
+
   overflow-wrap: anywhere;
 }
 
@@ -208,8 +320,10 @@
 
 .lending-book-info small {
   display: block;
+
   font-size: 12px;
   line-height: 1.5;
+
   overflow-wrap: anywhere;
 }
 
@@ -218,6 +332,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
+
   flex: 0 0 auto;
 }
 
@@ -227,27 +342,63 @@
 }
 
 .lending-status {
-  background: var(--primary-soft);
+  background: color-mix(
+    in srgb,
+    var(--palette-blue) 35%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-blue) 55%,
+    var(--border)
+  );
 }
 
 .borrowed-status {
-  background: var(--surface);
+  background: color-mix(
+    in srgb,
+    var(--palette-pink) 25%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-pink) 50%,
+    var(--border)
+  );
 }
 
 .lending-state {
   padding: clamp(32px, 6vw, 48px) 24px;
+
   text-align: center;
+
   border-radius: 16px;
+
+  background: color-mix(
+    in srgb,
+    var(--palette-blue) 15%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-blue) 40%,
+    var(--border)
+  );
 }
 
 .lending-state .empty-icon {
   margin-bottom: 12px;
+
   font-size: 36px;
   line-height: 1;
 }
 
 .lending-state h2 {
   margin: 0 0 8px;
+
   font-size: 19px;
   line-height: 1.35;
 }
@@ -255,12 +406,26 @@
 .lending-state p {
   max-width: 480px;
   margin: 0 auto;
+
   line-height: 1.6;
 }
 
 .shelf-error {
   padding: 14px 18px;
+
   border-radius: 12px;
+
+  background: color-mix(
+    in srgb,
+    var(--palette-pink) 18%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-pink) 45%,
+    var(--border)
+  );
 }
 
 .shelf-error .error {
@@ -274,7 +439,9 @@
 
 @media (max-width: 900px) {
   .lend-book-form {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
   }
 
   .lend-book-form > button {
@@ -298,7 +465,9 @@
     width: 54px;
     height: 54px;
     flex-basis: 54px;
+
     border-radius: 15px;
+
     font-size: 25px;
   }
 
@@ -316,6 +485,7 @@
 
   .lend-book-form {
     grid-template-columns: 1fr;
+
     gap: 15px;
     margin-top: 20px;
   }
@@ -328,8 +498,10 @@
   .lending-item {
     align-items: flex-start;
     flex-wrap: wrap;
+
     gap: 14px;
     padding: 17px;
+
     border-radius: 15px;
   }
 
@@ -341,7 +513,9 @@
   .lending-actions {
     width: 100%;
     flex: 1 1 100%;
+
     justify-content: flex-start;
+
     padding-left: 62px;
   }
 }
@@ -366,6 +540,7 @@
     width: 48px;
     height: 48px;
     flex-basis: 48px;
+
     border-radius: 13px;
     font-size: 22px;
   }
@@ -389,6 +564,7 @@
     width: 44px;
     height: 44px;
     flex-basis: 44px;
+
     border-radius: 11px;
     font-size: 20px;
   }
@@ -401,6 +577,7 @@
     padding-left: 0;
     flex-direction: column;
     align-items: stretch;
+
     gap: 8px;
   }
 

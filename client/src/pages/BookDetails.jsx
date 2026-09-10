@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import api from '../services/api';
@@ -70,7 +71,7 @@ export default function BookDetails() {
   const statusLabels = {
     WANT_TO_READ: 'Want to Read',
     READING: 'Reading',
-    FINISHED: 'Finished'
+    FINISHED: 'Finished',
   };
 
   return (
@@ -93,9 +94,11 @@ export default function BookDetails() {
             </p>
           </div>
 
-          <div className="book-read-only-badge">
-            Read Only
-          </div>
+          {!book.isOwner && (
+            <div className="book-read-only-badge">
+              Read Only
+            </div>
+          )}
         </div>
 
         <div className="book-details-grid">
@@ -145,7 +148,7 @@ export default function BookDetails() {
               <div
                 className="progress-fill"
                 style={{
-                  width: `${progress}%`
+                  width: `${progress}%`,
                 }}
               />
             </div>
@@ -176,3 +179,4 @@ export default function BookDetails() {
     </section>
   );
 }
+

@@ -159,7 +159,10 @@ async function getBook(req, res) {
 
   // Owner can always view their own book.
   if (book.ownerId === req.user.id) {
-    return res.json(book);
+    return res.json({
+      ...book,
+      isOwner: true,
+    });
   }
 
   // Check whether the current user has access
@@ -185,9 +188,13 @@ async function getBook(req, res) {
     });
   }
 
-  res.json(book);
+  // User can view the book through a shared shelf,
+  // but does not own the book.
+  res.json({
+    ...book,
+    isOwner: false,
+  });
 }
-
 
 /*
  * Add a new book.

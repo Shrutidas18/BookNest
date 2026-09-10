@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { connectSocket } from '../services/socket';
 
 export default function Shelves() {
   const navigate = useNavigate();
@@ -19,9 +20,14 @@ export default function Shelves() {
   const [deletingShelf, setDeletingShelf] =
     useState(null);
 
+  const [shelfToDelete, setShelfToDelete] =
+    useState(null);
 
-  async function loadShelves() {
-    setLoading(true);
+  async function loadShelves(showLoading = true) {
+    if (showLoading) {
+      setLoading(true);
+    }
+
     setError('');
 
     try {
@@ -52,7 +58,9 @@ export default function Shelves() {
           'Could not load your shelves.'
       );
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   }
 
@@ -60,6 +68,114 @@ export default function Shelves() {
     loadShelves();
   }, []);
 
+  /*
+   * REALTIME SHELF UPDATES
+   *
+   * Listen for shelf sharing and collaboration changes.
+   * This allows the Shared With Me list to update without
+   * requiring the user to manually refresh the page.
+   */
+  useEffect(() => {
+    const socket = connectSocket();
+
+    if (!socket) {
+      return undefined;
+    }
+
+    function handleConnect() {
+      console.log(
+        'Shelves realtime connected.'
+      );
+    }
+
+    function handleShelfShared(payload) {
+      console.log(
+        'Realtime shelf shared — refreshing shelves.',
+        payload
+      );
+
+      loadShelves(false);
+    }
+
+    function handleRoleChanged(payload) {
+      console.log(
+        'Realtime shelf role changed — refreshing shelves.',
+        payload
+      );
+
+      loadShelves(false);
+    }
+
+    function handleCollaboratorRemoved(payload) {
+      console.log(
+        'Realtime collaborator removed — refreshing shelves.',
+        payload
+      );
+
+      loadShelves(false);
+    }
+
+    function handleShelfDeleted(payload) {
+      console.log(
+        'Realtime shelf deleted — refreshing shelves.',
+        payload
+      );
+
+      loadShelves(false);
+    }
+
+    socket.on(
+      'connect',
+      handleConnect
+    );
+
+    socket.on(
+      'shelf:shared',
+      handleShelfShared
+    );
+
+    socket.on(
+      'shelf:role-changed',
+      handleRoleChanged
+    );
+
+    socket.on(
+      'shelf:collaborator-removed',
+      handleCollaboratorRemoved
+    );
+
+    socket.on(
+      'shelf:deleted',
+      handleShelfDeleted
+    );
+
+    return () => {
+      socket.off(
+        'connect',
+        handleConnect
+      );
+
+      socket.off(
+        'shelf:shared',
+        handleShelfShared
+      );
+
+      socket.off(
+        'shelf:role-changed',
+        handleRoleChanged
+      );
+
+      socket.off(
+        'shelf:collaborator-removed',
+        handleCollaboratorRemoved
+      );
+
+      socket.off(
+        'shelf:deleted',
+        handleShelfDeleted
+      );
+    };
+  }, []);
 
   async function handleCreateShelf(e) {
     e.preventDefault();
@@ -98,17 +214,24 @@ export default function Shelves() {
     }
   }
 
-  async function handleDeleteShelf(shelf) {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${shelf.name}"? This action cannot be undone.`
-    );
+  function requestDeleteShelf(shelf) {
+    setShelfToDelete(shelf);
+  }
 
-    if (!confirmed) {
+  function closeDeleteShelfModal() {
+    setShelfToDelete(null);
+  }
+
+  async function handleDeleteShelf() {
+    if (!shelfToDelete) {
       return;
     }
 
+    const shelf = shelfToDelete;
+
     setDeletingShelf(shelf.id);
     setError('');
+    setShelfToDelete(null);
 
     try {
       await api.delete(`/shelves/${shelf.id}`);
@@ -176,7 +299,7 @@ export default function Shelves() {
                 type="button"
                 className="icon-button danger-icon-button"
                 onClick={() =>
-                  handleDeleteShelf(shelf)
+                  requestDeleteShelf(shelf)
                 }
                 disabled={
                   deletingShelf === shelf.id
@@ -232,7 +355,9 @@ export default function Shelves() {
                     key={shelfBook.id}
                   >
                     <span>
-                      📖
+                      {(shelfBook.book?.title || 'U')
+                        .charAt(0)
+                        .toUpperCase()}
                     </span>
 
                     <div>
@@ -279,13 +404,8 @@ export default function Shelves() {
     );
   }
 
-  
-
   return (
     <div className="shelves-page">
-
-      
-
       <section className="shelves-header">
         <div>
           <p className="eyebrow">
@@ -316,8 +436,6 @@ export default function Shelves() {
         </button>
       </section>
 
-
-
       {error && (
         <section className="card shelf-error">
           <p className="error">
@@ -325,8 +443,6 @@ export default function Shelves() {
           </p>
         </section>
       )}
-
-    
 
       {showCreateForm && (
         <section className="card create-shelf-card">
@@ -380,7 +496,6 @@ export default function Shelves() {
         </section>
       )}
 
-
       {loading ? (
         <section className="card shelf-state">
           <p className="muted">
@@ -389,7 +504,6 @@ export default function Shelves() {
         </section>
       ) : (
         <>
-
           <section>
             <div className="section-heading">
               <div>
@@ -481,6 +595,47 @@ export default function Shelves() {
             )}
           </section>
         </>
+      )}
+
+      {shelfToDelete && (
+        <div className="delete-modal-overlay">
+          <div className="card delete-modal">
+            <h2>
+              Delete shelf
+            </h2>
+
+            <p>
+              Are you sure you want to delete
+              "{shelfToDelete.name}"? This action
+              cannot be undone.
+            </p>
+
+            <div className="delete-modal-actions">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={closeDeleteShelfModal}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="danger-button"
+                onClick={handleDeleteShelf}
+                disabled={
+                  deletingShelf ===
+                  shelfToDelete.id
+                }
+              >
+                {deletingShelf ===
+                shelfToDelete.id
+                  ? 'Deleting…'
+                  : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -11,6 +11,21 @@ const STATUS_LABELS = {
 
 const BOOKS_PER_PAGE = 6;
 
+const TOTAL_COVER_IMAGES = 10;
+
+function getBookCoverImage(book) {
+  const id = String(book?.id ?? '');
+
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  }
+
+  const coverNumber = (hash % TOTAL_COVER_IMAGES) + 1;
+
+  return `/cover${coverNumber}.jpg`;
+}
+
 export default function Library() {
   const navigate = useNavigate();
 
@@ -557,9 +572,11 @@ export default function Library() {
                   {/* Book Card Header */}
                   <div className="book-card-top">
 
-                    <span className="book-cover-placeholder">
-                      📖
-                    </span>
+                    <img
+                      src={getBookCoverImage(book)}
+                      alt={`Cover of ${book.title}`}
+                      className="book-cover-image"
+                    />
 
                     <span className="pill">
                       {formatStatus(
