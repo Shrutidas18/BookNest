@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { connectSocket } from '../services/socket';
-import "../styles/Dashboard.css";
+import "../styles/dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
