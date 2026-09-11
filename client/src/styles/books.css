@@ -86,7 +86,7 @@
   box-shadow: none;
 }
 
-.secondary-button:hover {
+button.secondary-button:hover:not(:disabled) {
   background: var(--surface-warm);
   color: var(--text);
   box-shadow: none;
@@ -644,12 +644,29 @@
   background: var(--surface, #ffffff);
 
   border: 1px solid var(--border, #e5e7eb);
+  border-top: 5px solid color-mix(
+    in srgb,
+    var(--palette-chocopie) 60%,
+    var(--border)
+  );
   border-radius: 20px;
 
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.05);
 
   min-width: 0;
+}
+
+.book-details-card.status-reading {
+  border-top-color: var(--palette-blue);
+}
+
+.book-details-card.status-want-to-read {
+  border-top-color: var(--palette-butter);
+}
+
+.book-details-card.status-finished {
+  border-top-color: var(--palette-chocopie);
 }
 
 .book-details-header {
@@ -663,6 +680,30 @@
 
   border-bottom: 1px solid
     var(--border, #e5e7eb);
+}
+
+.book-details-title-group {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 18px;
+
+  min-width: 0;
+}
+
+.book-details-cover {
+  width: 68px;
+  height: 96px;
+
+  flex-shrink: 0;
+
+  border-radius: 8px;
+
+  object-fit: cover;
+
+  box-shadow: var(--shadow-sm);
+
+  border: 1px solid var(--border, #e5e7eb);
 }
 
 .book-details-header h1 {
@@ -679,6 +720,80 @@
   font-size: 16px;
 
   overflow-wrap: anywhere;
+}
+
+.book-details-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+.status-pill {
+  position: static;
+
+  box-shadow: none;
+
+  color: var(--palette-chocopie, var(--primary-dark));
+
+  background: color-mix(
+    in srgb,
+    var(--palette-chocopie) 22%,
+    var(--surface)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--palette-chocopie) 42%,
+    var(--border)
+  );
+}
+
+.status-pill.status-reading {
+  color: var(--palette-chocopie, var(--primary-dark));
+
+  background: color-mix(
+    in srgb,
+    var(--palette-blue) 32%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-blue) 55%,
+    var(--border)
+  );
+}
+
+.status-pill.status-want-to-read {
+  background: color-mix(
+    in srgb,
+    var(--palette-butter) 45%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-butter) 62%,
+    var(--border)
+  );
+}
+
+.status-pill.status-finished {
+  background: color-mix(
+    in srgb,
+    var(--palette-chocopie) 22%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-chocopie) 42%,
+    var(--border)
+  );
 }
 
 .book-read-only-badge {
@@ -716,7 +831,93 @@
 
   background: var(--background, #f8fafc);
 
+  border: 1px solid transparent;
+
   border-radius: 14px;
+}
+
+.book-detail-item.detail-pages {
+  background: color-mix(
+    in srgb,
+    var(--palette-pink) 16%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-pink) 34%,
+    var(--border)
+  );
+}
+
+.book-detail-item.detail-current {
+  background: color-mix(
+    in srgb,
+    var(--palette-blue) 16%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-blue) 32%,
+    var(--border)
+  );
+}
+
+.book-detail-item.detail-status {
+  background: color-mix(
+    in srgb,
+    var(--palette-chocopie) 8%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-chocopie) 25%,
+    var(--border)
+  );
+}
+
+.book-detail-item.detail-status.status-reading {
+  background: color-mix(
+    in srgb,
+    var(--palette-blue) 16%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-blue) 32%,
+    var(--border)
+  );
+}
+
+.book-detail-item.detail-status.status-want-to-read {
+  background: color-mix(
+    in srgb,
+    var(--palette-butter) 30%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-butter) 45%,
+    var(--border)
+  );
+}
+
+.book-detail-item.detail-rating {
+  background: color-mix(
+    in srgb,
+    var(--palette-butter) 30%,
+    var(--surface)
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--palette-butter) 45%,
+    var(--border)
+  );
 }
 
 .book-detail-item span {
@@ -757,9 +958,53 @@
 
   overflow: hidden;
 
-  background: #e5e7eb;
+  background: color-mix(
+    in srgb,
+    var(--palette-chocopie) 12%,
+    #e5e7eb
+  );
 
   border-radius: 999px;
+}
+
+.book-progress-section .progress-fill {
+  background: var(--palette-chocopie);
+}
+
+.book-progress-section.status-reading .progress-track {
+  background: color-mix(
+    in srgb,
+    var(--palette-blue) 20%,
+    #e5e7eb
+  );
+}
+
+.book-progress-section.status-reading .progress-fill {
+  background: var(--palette-blue);
+}
+
+.book-progress-section.status-want-to-read .progress-track {
+  background: color-mix(
+    in srgb,
+    var(--palette-butter) 30%,
+    #e5e7eb
+  );
+}
+
+.book-progress-section.status-want-to-read .progress-fill {
+  background: var(--palette-butter);
+}
+
+.book-progress-section.status-finished .progress-track {
+  background: color-mix(
+    in srgb,
+    var(--palette-chocopie) 18%,
+    #e5e7eb
+  );
+}
+
+.book-progress-section.status-finished .progress-fill {
+  background: var(--palette-chocopie);
 }
 
 .book-notes-section {
@@ -776,10 +1021,16 @@
 
   padding: 18px;
 
-  background: var(--background, #f8fafc);
+  background: color-mix(
+    in srgb,
+    var(--palette-pink) 10%,
+    var(--background, #f8fafc)
+  );
 
   border: 1px solid
     var(--border, #e5e7eb);
+
+  border-left: 4px solid var(--palette-pink);
 
   border-radius: 14px;
 
@@ -1108,6 +1359,19 @@
     gap: 14px;
 
     padding-bottom: 22px;
+  }
+
+  .book-details-badges {
+    align-items: flex-start;
+
+    flex-direction: row;
+
+    flex-wrap: wrap;
+  }
+
+  .book-details-cover {
+    width: 56px;
+    height: 78px;
   }
 
   .book-read-only-badge {

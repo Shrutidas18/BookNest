@@ -530,6 +530,26 @@ gap: 16px;
 font-size: 24px;
 }
 
+.stat-card-secondary:nth-child(1) {
+background: color-mix(in srgb, var(--palette-chocopie) 6%, var(--surface));
+border-left: 4px solid var(--palette-chocopie);
+}
+
+.stat-card-secondary:nth-child(2) {
+background: color-mix(in srgb, var(--palette-blue) 20%, var(--surface));
+border-left: 4px solid var(--palette-blue);
+}
+
+.stat-card-secondary:nth-child(3) {
+background: color-mix(in srgb, var(--palette-butter) 35%, var(--surface));
+border-left: 4px solid var(--palette-butter);
+}
+
+.stat-card-secondary:nth-child(4) {
+background: color-mix(in srgb, var(--palette-pink) 28%, var(--surface));
+border-left: 4px solid var(--palette-pink);
+}
+
 @media (max-width: 900px) {
 .stats-grid,
 .stats-grid-primary,

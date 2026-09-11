@@ -3,6 +3,33 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { connectSocket } from '../services/socket';
 
+const TOTAL_COVER_IMAGES = 10;
+
+function getBookCoverImage(book) {
+  const id = String(book?.id ?? '');
+
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  }
+
+  const coverNumber = (hash % TOTAL_COVER_IMAGES) + 1;
+
+  return `/cover${coverNumber}.jpg`;
+}
+
+function getShelfCoverImages(shelf) {
+  if (!Array.isArray(shelf.books)) {
+    return [];
+  }
+
+  return shelf.books
+    .map((shelfBook) => shelfBook.book)
+    .filter(Boolean)
+    .map((book) => getBookCoverImage(book))
+    .slice(0, 4); // cap the collage at 4 images
+}
+
 export default function Shelves() {
   const navigate = useNavigate();
 
@@ -281,23 +308,33 @@ export default function Shelves() {
   function renderShelfCard(shelf, shared = false) {
     const bookCount = getBookCount(shelf);
     const role = getSharedRole(shelf);
+    const coverImages = getShelfCoverImages(shelf);
 
     return (
       <article
         className="card shelf-card"
         key={shelf.id}
       >
-        {/* Shelf Header */}
-        <div className="shelf-card-header">
-          <div className="shelf-icon">
-            🗂️
-          </div>
+        {/* Cover Collage */}
+        {coverImages.length > 0 ? (
+          <div
+            className={`shelf-cover-collage shelf-cover-collage-${coverImages.length}`}
+          >
+            {coverImages.map((src, index) => (
+              <div
+                key={index}
+                className="shelf-cover-collage-tile"
+                aria-hidden="true"
+                style={{
+                  backgroundImage: `url(${src})`,
+                }}
+              />
+            ))}
 
-          {!shared && (
-            <div className="shelf-card-menu">
+            {!shared && (
               <button
                 type="button"
-                className="icon-button danger-icon-button"
+                className="shelf-delete-button"
                 onClick={() =>
                   requestDeleteShelf(shelf)
                 }
@@ -311,9 +348,28 @@ export default function Shelves() {
                   ? '…'
                   : '🗑️'}
               </button>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        ) : (
+          !shared && (
+            <button
+              type="button"
+              className="shelf-delete-button shelf-delete-button-standalone"
+              onClick={() =>
+                requestDeleteShelf(shelf)
+              }
+              disabled={
+                deletingShelf === shelf.id
+              }
+              aria-label={`Delete ${shelf.name}`}
+              title="Delete shelf"
+            >
+              {deletingShelf === shelf.id
+                ? '…'
+                : '🗑️'}
+            </button>
+          )
+        )}
 
         {/* Shelf Content */}
         <div className="shelf-card-content">

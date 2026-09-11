@@ -140,17 +140,14 @@ background var(--transition),
 transform var(--transition-fast);
 }
 
-.nav-button:hover {
+button.nav-button:hover:not(:disabled) {
 background: color-mix(
 in srgb,
 var(--palette-pink) 32%,
 transparent
 );
-
 color: var(--palette-chocopie);
-
 box-shadow: none;
-
 transform: translateY(-1px);
 }
 

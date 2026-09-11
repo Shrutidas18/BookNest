@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/landing.css";
@@ -8,12 +7,6 @@ const Landing = () => {
 
   return (
     <div className="landing-page">
-      <div className="landing-image-section">
-        <div className="image-overlay">
-          <span>Every story leaves a mark.</span>
-        </div>
-      </div>
-
       <div className="landing-content">
         <div className="landing-inner">
           <div className="brand-mark">BOOKNEST</div>
@@ -27,9 +20,7 @@ const Landing = () => {
           </div>
 
           <h1>
-            Your books.
-            <br />
-            Your little world.
+            Your books. Your little world.
           </h1>
 
           <p className="landing-description">
@@ -63,9 +54,16 @@ const Landing = () => {
           </p>
         </div>
       </div>
+
+      <div className="landing-photo landing-photo-1">
+        <img src="/landing.jpg" alt="Bookshelf" />
+      </div>
+
+      <div className="landing-photo landing-photo-2">
+        <img src="/landing1.jpg" alt="Stacked books" />
+      </div>
     </div>
   );
 };
 
 export default Landing;
-

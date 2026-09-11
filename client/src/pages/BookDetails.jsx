@@ -1,7 +1,27 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import api from '../services/api';
+
+const TOTAL_COVER_IMAGES = 10;
+
+function getBookCoverImage(book) {
+  const id = String(book?.id ?? '');
+
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  }
+
+  const coverNumber = (hash % TOTAL_COVER_IMAGES) + 1;
+
+  return `/cover${coverNumber}.jpg`;
+}
+
+const STATUS_ACCENT_CLASSES = {
+  WANT_TO_READ: 'status-want-to-read',
+  READING: 'status-reading',
+  FINISHED: 'status-finished',
+};
 
 export default function BookDetails() {
   const { id } = useParams();
@@ -74,42 +94,64 @@ export default function BookDetails() {
     FINISHED: 'Finished',
   };
 
+  const statusAccentClass =
+    STATUS_ACCENT_CLASSES[book.status] || '';
+
   return (
     <section className="book-details-page">
       <Link to="/shelves" className="back-link">
         ← Back to Shelves
       </Link>
 
-      <div className="book-details-card">
+      <div
+        className={`book-details-card ${statusAccentClass}`}
+      >
         <div className="book-details-header">
-          <div>
-            <span className="section-eyebrow">
-              BOOK DETAILS
-            </span>
+          <div className="book-details-title-group">
+            <img
+              src={getBookCoverImage(book)}
+              alt={`Cover of ${book.title}`}
+              className="book-details-cover"
+            />
 
-            <h1>{book.title}</h1>
+            <div>
+              <span className="section-eyebrow">
+                BOOK DETAILS
+              </span>
 
-            <p className="book-author">
-              by {book.author}
-            </p>
+              <h1>{book.title}</h1>
+
+              <p className="book-author">
+                by {book.author}
+              </p>
+            </div>
           </div>
 
-          {!book.isOwner && (
-            <div className="book-read-only-badge">
-              Read Only
-            </div>
-          )}
+          <div className="book-details-badges">
+            <span
+              className={`pill status-pill ${statusAccentClass}`}
+            >
+              {statusLabels[book.status] ||
+                book.status}
+            </span>
+
+            {!book.isOwner && (
+              <div className="book-read-only-badge">
+                Read Only
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="book-details-grid">
-          <div className="book-detail-item">
+          <div className="book-detail-item detail-pages">
             <span>Total Pages</span>
             <strong>
               {book.totalPages || 'Not set'}
             </strong>
           </div>
 
-          <div className="book-detail-item">
+          <div className="book-detail-item detail-current">
             <span>Current Page</span>
             <strong>
               {book.currentPage}
@@ -119,7 +161,9 @@ export default function BookDetails() {
             </strong>
           </div>
 
-          <div className="book-detail-item">
+          <div
+            className={`book-detail-item detail-status ${statusAccentClass}`}
+          >
             <span>Reading Status</span>
             <strong>
               {statusLabels[book.status] ||
@@ -127,7 +171,7 @@ export default function BookDetails() {
             </strong>
           </div>
 
-          <div className="book-detail-item">
+          <div className="book-detail-item detail-rating">
             <span>Rating</span>
             <strong>
               {book.rating
@@ -138,7 +182,9 @@ export default function BookDetails() {
         </div>
 
         {book.totalPages && (
-          <div className="book-progress-section">
+          <div
+            className={`book-progress-section ${statusAccentClass}`}
+          >
             <div className="progress-heading">
               <span>Reading Progress</span>
               <strong>{progress}%</strong>
@@ -179,4 +225,3 @@ export default function BookDetails() {
     </section>
   );
 }
-

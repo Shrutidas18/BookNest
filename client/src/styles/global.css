@@ -124,6 +124,30 @@ a {
   color: var(--primary);
 }
 
+.book-details-page .back-link {
+  position: static;
+  display: inline-block;
+
+  width: auto;
+  height: auto;
+
+  margin-bottom: 16px;
+
+  color: var(--muted, var(--text-secondary));
+
+  font-size: 14px;
+  font-weight: 700;
+
+  border-radius: var(--radius-sm);
+
+  justify-content: flex-start;
+}
+
+.book-details-page .back-link:hover {
+  background: var(--bg);
+  color: var(--primary);
+}
+
 h1,
 h2,
 h3,
