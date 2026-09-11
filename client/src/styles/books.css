@@ -1555,3 +1555,23 @@ button.secondary-button:hover:not(:disabled) {
     padding: 18px;
   }
 }
+.library-header .back-link {
+  position: static;
+  display: inline-block;
+
+  width: auto;
+  height: auto;
+
+  margin-bottom: 10px;
+
+  color: var(--muted);
+
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.library-header .back-link:hover {
+  color: var(--text);
+}

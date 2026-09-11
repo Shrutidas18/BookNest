@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
 const STATUS_LABELS = {
@@ -350,6 +349,10 @@ export default function Library() {
       {/* Header */}
       <section className="library-header">
         <div>
+          <Link to="/dashboard" className="back-link">
+            ← Back to Dashboard
+          </Link>
+
           <p className="eyebrow">
             YOUR COLLECTION
           </p>

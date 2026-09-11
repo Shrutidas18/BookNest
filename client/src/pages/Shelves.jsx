@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { connectSocket } from '../services/socket';
 
@@ -464,6 +464,10 @@ export default function Shelves() {
     <div className="shelves-page">
       <section className="shelves-header">
         <div>
+          <Link to="/dashboard" className="back-link">
+            ← Back to Dashboard
+          </Link>
+
           <p className="eyebrow">
             ORGANIZE YOUR READING
           </p>

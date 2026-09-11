@@ -1620,3 +1620,45 @@ font-size: 11px;
 padding: 6px 8px;
 }
 }
+.shelves-page {
+display: flex;
+flex-direction: column;
+gap: 24px;
+}
+
+.shelves-header {
+display: flex;
+align-items: flex-end;
+justify-content: space-between;
+gap: 24px;
+}
+
+.shelves-header h1 {
+margin-bottom: 8px;
+}
+
+.shelves-header p {
+margin-bottom: 0;
+max-width: 600px;
+}
+
+.shelves-header .back-link {
+position: static;
+display: inline-block;
+
+width: auto;
+height: auto;
+
+margin-bottom: 10px;
+
+color: var(--muted);
+
+font-size: 14px;
+font-weight: 400;
+white-space: nowrap;
+text-decoration: none;
+}
+
+.shelves-header .back-link:hover {
+color: var(--text);
+}
