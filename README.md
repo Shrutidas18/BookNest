@@ -1,4 +1,4 @@
-# BookNest 📚
+# BookNest 
 
 **BookNest** is a full-stack reading tracker where users can manage their books, organize them into custom shelves, share shelves with other users, track their reading progress, and lend books to each other.
 
@@ -6,9 +6,9 @@ I built BookNest with a focus on the parts that make a multi-user application wo
 
 ---
 
-## What can you do with BookNest?
+# What can you do with BookNest?
 
-### 📖 Manage your library
+## Manage your library
 
 Users can add and manage their own books with:
 
@@ -22,7 +22,7 @@ Users can add and manage their own books with:
 
 The library also supports searching by title or author, filtering by reading status, sorting, and server-side pagination. Search and filters can be used together.
 
-### 📚 Organize books into shelves
+## Organize books into shelves
 
 Users can create their own shelves and add books to them.
 
@@ -30,7 +30,7 @@ Books and shelves have a **many-to-many relationship**, so the same book can app
 
 Deleting a shelf does not delete the books inside it, and deleting a book removes its shelf relationships cleanly.
 
-### 🤝 Share shelves
+## Share shelves
 
 Shelves can be shared with other registered users by email.
 
@@ -48,7 +48,7 @@ There is also a **Shared With Me** section where users can see shelves that othe
 
 The important part here is that these permissions are enforced by the **backend**. The frontend does not simply hide buttons and assume that is enough. If a Viewer tries to call an Editor-only API directly, the backend rejects the request.
 
-### 📄 Track reading progress
+## Track reading progress
 
 For books that are currently being read, users can update their current page and see their progress as a percentage.
 
@@ -60,7 +60,7 @@ The backend prevents invalid progress such as:
 
 When a reader reaches the last page, the book automatically changes to **Finished** and its finished date is recorded.
 
-### 🔄 Lend books to other users
+## Lend books to other users
 
 Users can lend their books to another registered user using their email.
 
@@ -75,7 +75,7 @@ The backend also handles the important edge cases:
 
 The owner can mark the book as returned, which clears the active lending relationship.
 
-### 📝 Activity feed
+## Activity feed
 
 BookNest keeps a record of important actions such as:
 
@@ -89,7 +89,7 @@ BookNest keeps a record of important actions such as:
 
 Recent activity is shown on the dashboard.
 
-### ⚡ Real-time updates
+## Real-time updates
 
 BookNest uses **Socket.IO** for real-time updates.
 
@@ -129,35 +129,35 @@ It shows:
 # How it is built
 
 ```text
-                 ┌─────────────────────┐
-                 │   React + Vite      │
-                 │      Frontend       │
-                 └──────────┬──────────┘
-                            │
-                     HTTP / Socket.IO
-                            │
-                 ┌──────────▼──────────┐
-                 │   Node + Express    │
-                 │       Backend       │
-                 └──────────┬──────────┘
-                            │
-                         Prisma
-                            │
-                 ┌──────────▼──────────┐
-                 │     PostgreSQL      │
-                 └─────────────────────┘
+                  ┌─────────────────────┐
+                  │   React + Vite      │
+                  │      Frontend       │
+                  └──────────┬──────────┘
+                             │
+                       HTTP / Socket.IO
+                             │
+                  ┌──────────▼──────────┐
+                  │   Node + Express    │
+                  │       Backend       │
+                  └──────────┬──────────┘
+                             │
+                           Prisma
+                             │
+                  ┌──────────▼──────────┐
+                  │     PostgreSQL      │
+                  └─────────────────────┘
 ```
 
-### Stack
+## Stack
 
-* **React + Vite** — frontend
-* **Node.js + Express** — backend API
-* **PostgreSQL** — database
-* **Prisma** — database ORM
-* **JWT** — authentication
-* **bcrypt** — password hashing
-* **Socket.IO** — real-time communication
-* **CSS** — styling and responsive layouts
+* **React + Vite** :frontend
+* **Node.js + Express**: backend API
+* **PostgreSQL**:  database
+* **Prisma**: database ORM
+* **JWT**: authentication
+* **bcrypt**: password hashing
+* **Socket.IO**: real-time communication
+* **CSS**: styling and responsive layouts
 
 I chose PostgreSQL because the application has several relationships between users, books, shelves, sharing, and lending. Prisma makes those relationships easier to define and query.
 
@@ -167,49 +167,33 @@ Socket.IO was used because the assessment requires actual WebSocket-based update
 
 # Data Model
 
-The main relationships in BookNest look like this:
+The main relationships in BookNest is: 
 
-```text
-User
- │
- ├── Books
- │
- ├── Shelves
- │      │
- │      ├── ShelfBook ─── Books
- │      │
- │      └── ShelfShare ─── Users
- │
- ├── Lending
- │
- └── ActivityLog
-```
-
-### User → Books
+## User → Books
 
 A user owns their books.
 
-### User → Shelves
+## User → Shelves
 
 A user can create multiple shelves.
 
-### Book ↔ Shelf
+## Book ↔ Shelf
 
 Books and shelves have a many-to-many relationship through `ShelfBook`.
 
 This means a book can be on multiple shelves without creating duplicate book records.
 
-### Shelf → ShelfShare → User
+## Shelf → ShelfShare → User
 
 `ShelfShare` represents another user's access to a shelf and stores their role as either `EDITOR` or `VIEWER`.
 
-### Book → Lending → User
+## Book → Lending → User
 
 `Lending` connects the book owner with the user currently borrowing the book.
 
 An active lending record prevents the same book from being lent to another user at the same time.
 
-### ActivityLog
+## ActivityLog
 
 `ActivityLog` stores the important events that appear in the dashboard activity feed.
 
@@ -335,7 +319,7 @@ npm run seed
 
 resets the existing BookNest data and creates a fresh set of demo data.
 
-### Demo users
+## Demo users
 
 **Alice**
 
@@ -351,16 +335,16 @@ Email: bob@booknest.test
 Password: Password123!
 ```
 
-### Alice's books
+## Alice's books
 
 * **Atomic Habits** — Reading, 120/320 pages, rating 5
 * **The Pragmatic Programmer** — Want to Read
 
-### Bob's book
+## Bob's book
 
 * **Clean Code** — Finished, 464/464 pages, rating 4
 
-### Shared shelf
+## Shared shelf
 
 Alice has a shelf called:
 
@@ -373,7 +357,7 @@ It contains:
 
 The shelf is shared with Bob as an **Editor**.
 
-### Active lending
+## Active lending
 
 **The Pragmatic Programmer** is seeded as currently lent from Alice to Bob.
 
@@ -382,6 +366,23 @@ This means the lending and borrowed-book flows can be tested immediately after r
 The seed also creates a few initial activity records for the dashboard.
 
 The seeded credentials are for local development/demo purposes only.
+
+---
+
+# Quick Demo
+
+After setting up the project and running the seed, the following flow can be used to quickly verify the main multi-user features:
+
+1. Log in as **Alice**.
+2. Open the shared **Tech & Self Improvement** shelf.
+3. Open a second browser or incognito window and log in as **Bob**.
+4. Verify that Bob can access the shared shelf with his assigned **Editor** role.
+5. From Alice's session, lend a book to Bob.
+6. Verify that Bob's **Borrowed From Others** view updates without manually refreshing.
+7. Return the book from Alice's session.
+8. Verify that Bob's borrowed-book view updates again.
+9. Make a change to the shared shelf and verify that the collaborator receives the update in real time.
+10. Optionally change Bob's role to **Viewer** and verify that Editor-only actions are rejected by the backend.
 
 ---
 
@@ -404,7 +405,7 @@ booknest
 ## 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/Shrutidas18/BookNest.git
 cd booknest
 ```
 
@@ -462,7 +463,7 @@ The real `.env` file should not be committed to the repository.
 From the `server` directory:
 
 ```bash
-npx prisma migrate dev --name init
+npx prisma migrate deploy
 ```
 
 Then seed the database:
@@ -470,6 +471,10 @@ Then seed the database:
 ```bash
 npm run seed
 ```
+
+`prisma migrate deploy` applies the migration files included in the repository to the local PostgreSQL database.
+
+The seed command then creates the demo users and sample BookNest data.
 
 ---
 
@@ -553,9 +558,9 @@ The WebSocket work was also interesting because the application should not simpl
 
 # Known Issues / Incomplete
 
-There are currently no known incomplete **core assessment requirements**.
+As of now there are no known incomplete **core assessment requirements**.
 
-The project focuses on the required functionality from the assessment. Optional stretch features are not considered part of the core implementation.
+The project focuses on the required functionality from the assessment. 
 
 ---
 
@@ -573,13 +578,13 @@ Some things I would like to add are:
 * Book cover and metadata integration.
 * More detailed reading statistics.
 
-The assessment scope was prioritized first, so these would be the next improvements rather than replacing any of the existing core functionality.
+The assessment was prioritized first, so these would be the next improvements rather than replacing any of the existing core functionality.
 
 ---
 
 # AI Usage
 
-I used AI tools, mainly ChatGPT, during the development of BookNest.
+I used AI tools, mainly ChatGPT, claude and Gemini as well of Learning during the development of BookNest.
 
 I used AI as a development and learning aid for things like:
 
@@ -645,10 +650,10 @@ The main assessment requirements are covered as follows:
 
 ---
 
-## Final note
+# Final note
 
 BookNest started as a reading-tracker idea, but the main goal of the project became making it behave like a real multi-user application.
 
-The parts I spent the most time on were the backend rules and the interactions between users — especially shelf permissions, lending, reading-progress validation, authentication, and real-time updates.
+The parts I spent the most time on were the backend rules and the interactions between users: especially shelf permissions, lending, reading-progress validation, authentication, and real-time updates.
 
 This project was built as part of a coding assessment.
